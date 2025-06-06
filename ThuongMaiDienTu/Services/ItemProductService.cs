@@ -25,7 +25,7 @@ namespace ThuongMaiDienTu.Services
                                                                 .ThenInclude(x => x.Product)
                                                      .Where(x => x.ProductType.ProductLaunch.Product.Id == id && x.ProductType.ProductLaunch.Id == idLaunch)
                                                      .ToListAsync();
-            
+
             foreach (var item in listInvoice)
             {
                 if(item.Invoice.Status != -1 && item.Invoice.Status != -100)
@@ -44,7 +44,7 @@ namespace ThuongMaiDienTu.Services
                                                 .ThenInclude(x => x.Types)
                                                     .ThenInclude(x => x.Prices)
                                               .FirstOrDefaultAsync(x => x.Id == id);
-            return item;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+            return item;
         }
 
         public async Task<IEnumerable<ProductCardVM>> List()
@@ -62,6 +62,7 @@ namespace ThuongMaiDienTu.Services
                 {
                     Id = item.Id,
                     Name = item.Name,
+                    CategoryId = item.CategoryId,
                     ImageUrl = item.Images?.FirstOrDefault()?.Url ?? "default.jpg" // hoặc null tùy bạn
                 };
 

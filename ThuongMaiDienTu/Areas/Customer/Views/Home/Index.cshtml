@@ -41,16 +41,16 @@
 
     </div>
     <div class="trend_product">
-        <h3 class="my_smalltitle">Trending</h3>
+        <h3 class="my_smalltitle" id="trending-hearder" style="cursor: pointer">Trending</h3>
         <div id="list-product" class="list_product owl-carousel carousel-1">
         </div>
     </div>
-    <h3 class="text-center my_largetitle">Categories</h3>
+    <h3 class="text-center my_largetitle" id="categories-header" style="cursor: pointer;">Categories</h3>
     <div class="list_categories ">
         <div id="list-categories" class="owl-carousel carousel-2">
         </div>
     </div>
-    <h3 class="my_smalltitle">Feature product</h3>
+    <h3 class="my_smalltitle" id="feature-product-header" style="cursor:pointer">Feature product</h3>
     <div class="row">
         <div class="col-md-3 d-none d-md-block">
             <div class="card my_card">
@@ -516,7 +516,7 @@
             </div>
         </div>
     </div>
-    <h3 class="my_smalltitle">For you</h3>
+    <h3 class="my_smalltitle" id="for-you-header" style="cursor:pointer">For you</h3>
     <div id="list-product" class="list_product owl-carousel carousel-1">
     </div>
 </div>
@@ -524,4 +524,18 @@
 @section Scripts {
     <script src="~/LoadData/LoadCategory.js"></script>
     <script src="~/LoadData/LoadProduct.js"></script>
+    <script>
+        document.getElementById('categories-header').addEventListener('click', function() {
+            window.location.href = '/Customer/Search';
+        });
+        document.getElementById('trending-hearder').addEventListener('click', function() {
+            window.location.href = '/Customer/Search';
+        });
+        document.getElementById('feature-product-header').addEventListener('click', function() {
+            window.location.href = '/Customer/Search';
+        });
+        document.getElementById('for-you-header').addEventListener('click', function() {
+            window.location.href = '/Customer/Search';
+        });
+    </script>
 }
