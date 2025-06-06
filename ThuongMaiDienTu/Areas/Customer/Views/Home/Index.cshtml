@@ -1,6 +1,6 @@
 ﻿@model ThuongMaiDienTu.ViewModels.ProductCardVM
 <link rel="stylesheet" href="~/css/featured-product.css" />
-<div class="container">
+<div class="container mt-5">
     <div class="carousel_image">
         <div id="carouselExampleIndicators" class="carousel slide">
             <div class="carousel-indicators">
@@ -42,17 +42,17 @@
         </div>
 
     </div>
-    <div class="trend_product">
-        <h3 class="my_smalltitle" id="trending-hearder" style="cursor: pointer">Trending</h3>
+    <div class="trend_product mt-5">
+        <h3 class="my_smalltitle" id="trending-hearder" style="cursor: pointer">Xu hướng</h3>
         <div id="list-product" class="list_product owl-carousel carousel-1">
         </div>
     </div>
-    <h3 class="text-center my_largetitle" id="categories-header" style="cursor: pointer;">Categories</h3>
+    <h3 class="text-center my_largetitle" id="categories-header" style="cursor: pointer;">Danh mục</h3>
     <div class="list_categories ">
         <div id="list-categories" class="owl-carousel carousel-2">
         </div>
     </div>
-    <h3 class="my_smalltitle" id="feature-product-header" style="cursor:pointer">Feature product</h3>
+    <h3 class="my_smalltitle mt-5" id="feature-product-header" style="cursor:pointer">Sản phẩm đặc trưng</h3>
     <div class="row">
         @if (Model != null)
         {
@@ -126,8 +126,8 @@
     </div>
     
 </div>
-<h3 class="my_smalltitle" id="for-you-header" style="cursor:pointer">For you</h3>
-<div id="list-product" class="list_product owl-carousel carousel-1">
+<h3 class="my_smalltitle ms-2 mt-5" id="for-you-header" style="cursor:pointer">Dành cho bạn</h3>
+<div id="list-product" class="list_product ms-2 owl-carousel carousel-1">
 </div>
 @section Scripts {
     <script src="~/LoadData/LoadCategory.js"></script>

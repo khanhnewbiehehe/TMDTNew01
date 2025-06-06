@@ -1,3 +1,7 @@
+body {
+    font-family: 'Public Sans', sans-serif;
+}
+
 .my_navbar {
     background-color: #1b6392 !important;
 }
@@ -11,6 +15,32 @@
     font-size: 20px;
     margin: 16px 0;
     color: #1b6392;
+    position: relative;
+    display: inline-block;
+    padding-bottom: 5px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.my_smalltitle:after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 3px;
+    bottom: 0;
+    left: 0;
+    background-color: #fa8232;
+    transition: width 0.3s ease;
+}
+
+.my_smalltitle:hover {
+    color: #fa8232;
+    transform: translateY(-2px);
+}
+
+.my_smalltitle:hover:after {
+    width: 100%;
 }
 
 @media (min-width: 768px) {
@@ -48,8 +78,36 @@
 
 .my_largetitle {
     font-size: 25px;
-    margin: 32px 0;
+    margin: 80px 0 15px;
     color: #1b6392;
+    text-align: center;
+    position: relative;
+    display: inline-block;
+    padding-bottom: 8px;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.my_largetitle:after {
+    content: '';
+    position: absolute;
+    width: 40%;
+    height: 4px;
+    bottom: 0;
+    left: 30%;
+    background-color: #fa8232;
+    transition: all 0.3s ease;
+}
+
+.my_largetitle:hover {
+    color: #fa8232;
+    transform: translateY(-3px);
+}
+
+.my_largetitle:hover:after {
+    width: 100%;
+    left: 0;
 }
 
 @media (min-width: 768px) {
@@ -99,7 +157,7 @@
     box-shadow: 0 2px 12px rgba(0,0,0,0.1);
     border-radius: 6px;
     overflow: hidden;
-    margin: 6px;
+    margin: 6px 0 6px 6px;
     width: 10rem;
     position: relative;
 }
@@ -378,7 +436,7 @@
 
 .my_categoriescard {
     box-shadow: 0 2px 12px rgba(0,0,0,0.1);
-    border-radius: 20px;
+    border-radius: 8px;
     overflow: hidden;
     margin: 10px;
     width: 7rem;
