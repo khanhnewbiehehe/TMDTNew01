@@ -1,0 +1,17 @@
+﻿<div class="container">
+    <div class="result-card card shadow">
+        @{
+            if(ViewBag.Result == 0)
+            {
+                <img src="/assets/images/failed.jpg"></img>
+                <p>Thanh toán thất bại !</p>
+            }
+            else
+            {
+                <img src="/assets/images/success.png"></img>
+                <p>Thanh toán thành công !</p>
+            }
+        }
+        <a href="/customer" class="btn btn-secondary mt-4">Quay lại</a>
+    </div>
+</div>

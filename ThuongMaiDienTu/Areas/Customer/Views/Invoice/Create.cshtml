@@ -1,0 +1,97 @@
+﻿@model ThuongMaiDienTu.Models.Invoice
+
+<div class="container p-5">
+    <div class="mt-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="/">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="blue" width="16px" class="me-2" viewBox="0 0 576 512">
+                            <path d="M575.8 255.5c0 18-15 32.1-32 32.1l-32 0 .7 160.2c0 2.7-.2 5.4-.5 8.1l0 16.2c0 22.1-17.9 40-40 40l-16 0c-1.1 0-2.2 0-3.3-.1c-1.4 .1-2.8 .1-4.2 .1L416 512l-24 0c-22.1 0-40-17.9-40-40l0-24 0-64c0-17.7-14.3-32-32-32l-64 0c-17.7 0-32 14.3-32 32l0 64 0 24c0 22.1-17.9 40-40 40l-24 0-31.9 0c-1.5 0-3-.1-4.5-.2c-1.2 .1-2.4 .2-3.6 .2l-16 0c-22.1 0-40-17.9-40-40l0-112c0-.9 0-1.9 .1-2.8l0-69.7-32 0c-18 0-32-14-32-32.1c0-9 3-17 10-24L266.4 8c7-7 15-8 22-8s15 2 21 7L564.8 231.5c8 7 12 15 11 24z" />
+                        </svg>
+                        Home
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">Hóa đơn sản phẩm</li>
+            </ol>
+        </nav>
+    </div>
+
+    <div class="mt-3">
+        <div class="card order-card shadow mx-auto">
+            <form asp-action="Create" asp-controller="Invoice" asp-area="Customer">
+                <div class="card-header">
+                    Thông tin thanh toán
+                </div>
+                <div class="card-body">
+                    <div class="mt-3">
+                        <strong>Sản phẩm: </strong>
+                        <div class="d-flex flex-column">
+                            @{
+                                foreach (var item in Model.InvoiceItems)
+                                {
+                                    <div class="card order-item shadow p-3 mt-2">
+                                        <div class="row">
+                                            <div class="col-3">
+                                                <div class="card-image shadow">
+                                                    <img src="@item.ProductType.ImageUrl" alt="Ảnh sản phẩm"></img>
+                                                </div>
+                                            </div>
+                                            <div class="col-9">
+                                                <div class="card-body h-100">
+                                                    <div class=" h-100 d-flex flex-column justify-content-between">
+                                                        <div class="card-title">@item.ProductType.Name</div>
+                                                        <div class="w-100 text-end"><strong>Số lượng: </strong> @item.Quantity</div>
+                                                    </div>
+
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <div class="d-flex justify-content-between">
+                            <div><strong>Tiền cọc: </strong></div>
+                            <div class="fw-bold text-success">
+                                @{
+                                    decimal total = 0;
+                                    foreach (var item in Model.InvoiceItems)
+                                    {
+                                        total += item.Amount;
+                                    }
+                                    decimal deposit = total * 0.3m;
+                                }
+
+                                @deposit.ToString("N0")
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                    <input hidden asp-for="UserId"></input>
+                    <input hidden asp-for="Status"></input>
+                    <input hidden asp-for="CreateAt"></input>
+                    <input hidden asp-for="Address" value="Chưa cập nhật"></input>
+                    <input hidden asp-for="Deposit" value="@deposit"></input>
+                    <input hidden asp-for="PaymentCode" value="temp"></input>
+                @{
+                    var i = 0;
+                    foreach(var item in Model.InvoiceItems)
+                    {
+                        <input hidden name="InvoiceItems[@i].ProductTypeId" value="@item.ProductTypeId"></input>
+                        <input hidden name="InvoiceItems[@i].Quantity" value="@item.Quantity"></input>
+                        <input hidden name="InvoiceItems[@i].Amount" value="@item.Amount"></input>
+                        i++;
+                    }
+                }
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-success w-100">Đặt cọc</button>
+                </div>
+            </form>      
+        </div>
+    </div>
+</div>
