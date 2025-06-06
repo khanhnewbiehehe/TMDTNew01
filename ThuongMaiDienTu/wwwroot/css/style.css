@@ -97,9 +97,9 @@
 
 .my_card {
     box-shadow: 0 2px 12px rgba(0,0,0,0.1);
-    border-radius: 20px;
+    border-radius: 6px;
     overflow: hidden;
-    margin: 10px;
+    margin: 6px;
     width: 10rem;
     position: relative;
 }
@@ -728,3 +728,155 @@
     font-weight: bold;
     font-size: 20px;
 }
+
+.information-card {
+    width: 500px;
+    border-radius: 0px;
+}
+
+    .information-card .card-header {
+        border-radius: 0px;
+        background-color: #1b6392;
+        color: white;
+        font-size: 20px;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    .information-card .card-footer {
+        background-color: white;
+        border-radius: 0px;
+    }
+
+    .information-card strong {
+        color: #1b6392;
+    }
+
+    .information-card .card-image {
+        width: 200px;
+        aspect-ratio: 1/1;
+        overflow: hidden;
+        border-radius: 50%;
+    }
+
+        .information-card .card-image img {
+            width: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+.order-card {
+    width: 500px;
+    border-radius: 0px;
+}
+
+    .order-card .card-header {
+        border-radius: 0px;
+        background-color: #1b6392;
+        color: white;
+        font-size: 20px;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    .order-card strong {
+        color: #1b6392;
+    }
+
+    .order-card .order-item .card-title {
+        color: #1b6392;
+        font-weight: bold;
+    }
+
+    .order-card .order-item .card-image {
+        width: 110px;
+        aspect-ratio: 1/1;
+        overflow: hidden;
+    }
+
+        .order-card .order-item .card-image img {
+            width: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+.result-card {
+    width: 600px;
+    padding: 64px;
+    margin: 32px auto;
+    text-align: center;
+}
+
+    .result-card img {
+        width: 100px;
+        margin: 32px auto;
+    }
+
+    .result-card p {
+        color: #1b6392;
+        font-weight: bold;
+        font-size: 20px;
+    }
+
+.cart-card {
+    width: 1000px;
+    border-radius: 0px;
+}
+
+    .cart-card .card-header {
+        border-radius: 0px;
+        background-color: #1b6392;
+        color: white;
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+.order-item .card-image {
+    width: 220px;
+    aspect-ratio: 1/1;
+    overflow: hidden;
+}
+
+    .order-item .card-image img {
+        width: 100%;
+        object-fit: cover;
+        object-position: center;
+    }
+
+.order-item .card-title {
+    color: #1b6392;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.order-modal .modal-content {
+    width: 600px;
+    border-radius: 0px;
+}
+
+    .order-modal .modal-content .modal-header {
+        background-color: #1b6392;
+        border-radius: 0px;
+        color: white;
+        font-weight: bold;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+        .order-modal .modal-content .modal-header button {
+            background-color: #1b6392;
+            border: 0;
+        }
+
+    .order-modal .modal-content .modal-body .card .card-image {
+        width: 100px;
+        aspect-ratio: 1/1;
+        overflow: hidden;
+    }
+
+        .order-modal .modal-content .modal-body .card .card-image img {
+            width: 100%;
+            object-fit: cover;
+            object-position: center;
+        }

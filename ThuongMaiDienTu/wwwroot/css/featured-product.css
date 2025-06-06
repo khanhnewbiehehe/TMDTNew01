@@ -1,0 +1,14 @@
+/* Styling for product description in featured product */
+.product-description {
+    margin-top: 10px;
+    margin-bottom: 15px;
+}
+
+.description-text {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #5F6C72;
+    margin-bottom: 0;
+    max-height: 120px;
+    overflow-y: auto;
+}

@@ -98,6 +98,50 @@
     padding: 5px 10px;
 }
 
+/* Overlay button styling similar to the main product page */
+.my_overlaybtn {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 20px !important;
+    background-color: white !important;
+    margin: 0px 8px;
+}
+
+@media (min-width: 768px) {
+    .my_overlaybtn {
+        width: 40px !important;
+        height: 40px !important;
+        border-radius: 20px !important;
+        margin: 0px 12px;
+    }
+}
+
+@media (min-width: 992px) {
+    .my_overlaybtn {
+        width: 60px !important;
+        height: 60px !important;
+        border-radius: 30px !important;
+        margin: 0px 16px;
+    }
+}
+
+.my_overlaybtn svg {
+    width: 28px;
+    fill: black;
+}
+
+@media (min-width: 768px) {
+    .my_overlaybtn svg {
+        width: 28px;
+    }
+}
+
+@media (min-width: 992px) {
+    .my_overlaybtn svg {
+        width: 40px;
+    }
+}
+
 .badge-full {
     background-color: #efd33d !important;
     color: #333;
