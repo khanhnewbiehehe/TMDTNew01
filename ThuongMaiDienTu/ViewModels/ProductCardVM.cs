@@ -10,5 +10,6 @@
         public DateTime End { get; set; }
         public int Registration { get; set; }
         public int Quantity { get; set; }
+        public int CategoryId { get; set; }
     }
 }
