@@ -1,0 +1,98 @@
+﻿@model IEnumerable<ThuongMaiDienTu.Models.Product>
+@{
+    ViewData["Title"] = "Danh sách sản phẩm";
+}
+
+<div class="row">
+    <div class="content ms-2">
+        <h2 class="my-3 text-center mb-4">Danh sách sản phẩm</h2>
+
+        <a asp-action="Create" class="btn btn-primary mb-3">
+            + Thêm sản phẩm
+        </a>
+
+        @if (TempData["DeleteError"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                @TempData["DeleteError"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }else if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        <div class="table-responsive">
+            <table id="productsTable" class="table table-bordered table-striped display responsive nowrap" style="width:100%">
+                <thead>
+                    <tr>
+                        <th data-priority="1">Tên</th>
+                        <th data-priority="3">Danh mục</th>
+                        <th data-priority="4">Ngày tạo</th>
+                        <th data-priority="5">Hình ảnh</th>
+                        <th data-priority="2">Chức năng</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Name</td>
+                            <td>@item.Category?.Name</td>
+                            <td>@item.CreateAt.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                @if (item.Images != null && item.Images.Any())
+                                {
+                                    <img src="@item.Images.First().Url" class="img-thumbnail" style=" width: 80px; object-fit: cover;" alt="Product Image" />
+                                }
+                                else
+                                {
+                                    <span>(Không có hình)</span>
+                                }
+                            </td>
+                            <td>
+                                <div class="d-flex flex-nowrap gap-1">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info" data-bs-toggle="tooltip" title="Xem chi tiết">
+                                        Xem
+                                    </a>
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning" data-bs-toggle="tooltip" title="Chỉnh sửa">
+                                        Sửa
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger"
+                                       onclick="return confirm('Bạn có chắc muốn xóa sản phẩm này không?')"
+                                       data-bs-toggle="tooltip" title="Xóa">
+                                        Xóa
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#productsTable').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Vietnamese.json"
+                },
+                "paging": true,
+                "ordering": true,
+                "info": true,
+                "searching": true,
+                "responsive": true
+            });
+
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            })
+        });
+    </script>
+}

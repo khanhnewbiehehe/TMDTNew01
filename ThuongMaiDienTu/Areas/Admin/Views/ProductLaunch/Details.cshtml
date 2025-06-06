@@ -1,0 +1,110 @@
+﻿@model ThuongMaiDienTu.Areas.Admin.ViewModels.ProductLaunchCreateViewModel
+
+@{
+    ViewData["Title"] = "Chi tiết đợt mở bán";
+}
+<div class="row">
+    <div class="content ms-2">
+        <a asp-action="Index" class="btn btn-outline-secondary mt-3">&lt; Quay lại</a>
+        <h2 class="my-3 text-center mb-4">Chi tiết đợt mở bán</h2>
+
+        <hr />
+
+        <dl class="row">
+            <dt class="col-sm-3">Tên đợt mở bán</dt>
+            <dd class="col-sm-9">@Model.LaunchName</dd>
+
+            <dt class="col-sm-3">Mô tả</dt>
+            <dd class="col-sm-9">@Model.Description</dd>
+
+            <dt class="col-sm-3">Ngày bắt đầu</dt>
+            <dd class="col-sm-9">@Model.DateStart.ToString("dd/MM/yyyy HH:mm")</dd>
+
+            <dt class="col-sm-3">Ngày kết thúc</dt>
+            <dd class="col-sm-9">@Model.DateEnd.ToString("dd/MM/yyyy HH:mm")</dd>
+
+            <dt class="col-sm-3">Trạng thái</dt>
+            <dd class="col-sm-9">
+                @{
+                    var now = DateTime.Now;
+                    var status = now < Model.DateStart
+                    ? "Sắp mở"
+                    : (now <= Model.DateEnd ? "Đang mở" : "Kết thúc");
+                    switch (status)
+                    {
+                        case "Sắp mở":
+                            <span class="badge bg-warning text-dark">Sắp mở</span>
+                            break;
+                        case "Đang mở":
+                            <span class="badge bg-success">Đang mở</span>
+                            break;
+                        default:
+                            <span class="badge bg-secondary">Kết thúc</span>
+                            break;
+                    }
+                }
+            </dd>
+
+        </dl>
+
+        <hr />
+        <h4>Danh sách loại sản phẩm</h4>
+
+        @if (Model.ProductTypes.Count == 0)
+        {
+            <p>Không có loại sản phẩm nào.</p>
+        }
+        else
+        {
+            <p><strong>Tổng số loại sản phẩm:</strong> @Model.ProductTypes.Count</p>
+
+            @for (int i = 0; i < Model.ProductTypes.Count; i++)
+            {
+                var pt = Model.ProductTypes[i];
+                <div class="card mb-3 p-3 shadow-sm">
+                    <h5>Loại sản phẩm #@(i + 1)</h5>
+                    <p><strong>Tên:</strong> @pt.Name</p>
+                    <p><strong>Số lượng:</strong> @pt.Quantity</p>
+                    <p><strong>Giá ban đầu:</strong> @pt.MaxPrice.ToString("#,##0 VNĐ", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</p>
+
+                    @if (!string.IsNullOrEmpty(pt.ImageUrl))
+                    {
+                        <p>
+                            <strong>Ảnh:</strong><br />
+                            <img src="@pt.ImageUrl" width="120" class="img-thumbnail" />
+                        </p>
+                    }
+
+                    <h6>Mốc giảm giá:</h6>
+                    @if (pt.PriceItems.Count == 0)
+                    {
+                        <p>Không có mốc giá nào.</p>
+                    }
+                    else
+                    {
+                        <table class="table table-bordered table-sm">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Số lượng đơn hàng</th>
+                                    <th>Giá</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var price in pt.PriceItems)
+                                {
+                                    <tr>
+                                        <td>@price.Quantity</td>
+                                        <td>@string.Format(System.Globalization.CultureInfo.GetCultureInfo("vi-VN"), "{0:N0} VNĐ", price.Price)</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            }
+
+        }
+
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning mt-3 px-5">Sửa đợt mở bán</a>
+    </div>
+</div>

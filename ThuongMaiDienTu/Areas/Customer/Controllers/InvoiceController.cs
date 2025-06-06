@@ -99,7 +99,7 @@ namespace ThuongMaiDienTu.Areas.Customer.Controllers
                 return RedirectToAction("Index", "SanPham");
             }
             HttpContext.Session.Remove("PendingHoaDon");
-            return Redirect(_vnpayService.CreatePaymentUrl(HttpContext, model.Deposit, model.PaymentCode));
+            return Redirect(_vnpayService.CreatePaymentUrl(HttpContext, model.Deposit, model.Id.ToString()));
         }
 
         [Route("Customer/Invoice/Result")]
@@ -116,7 +116,7 @@ namespace ThuongMaiDienTu.Areas.Customer.Controllers
 
                 var code = response.OrderDescription;
                 var hoaDon = await _context.Invoices
-                    .FirstOrDefaultAsync(x => x.PaymentCode == code);
+                    .FirstOrDefaultAsync(x => x.Id.ToString() == code);
 
                 if (hoaDon == null)
                 {
@@ -124,7 +124,18 @@ namespace ThuongMaiDienTu.Areas.Customer.Controllers
                     return View();
                 }
 
-                hoaDon.Status = 0;
+                if (hoaDon.Status == 0)
+                {
+                    hoaDon.Status = 1;
+                }
+
+                if (hoaDon.Status == -100)
+                {
+                    hoaDon.Status = 0;
+                }
+
+                
+
                 _context.Invoices.Update(hoaDon);
                 await _context.SaveChangesAsync();
 
@@ -138,7 +149,31 @@ namespace ThuongMaiDienTu.Areas.Customer.Controllers
         [Route("Customer/Invoice")]
         public async Task<IActionResult> Index()
         {
-            return View();
+            var user = await _userManager.GetUserAsync(User);
+            var list = await _invoice.ListByCustomer(user.Id);
+            return View(list);
+        }
+        [Route("Customer/Invoice/Details/{id}")]
+        public async Task<IActionResult> Details(int id)
+        {
+            var item = await _invoice.Details(id);
+            ViewBag.CurrentPrice = await _productType.CurrentPrice(item.InvoiceItems.FirstOrDefault().ProductTypeId);
+            return View(item);
+        }
+        [Route("Customer/Invoice/Payment")]
+        [HttpPost]
+        public async Task<IActionResult> Payment([FromBody] Invoice invoice)
+        {
+            var redirectUrl = _vnpayService.CreatePaymentUrl(HttpContext, invoice.ToTal - invoice.Deposit, invoice.Id.ToString());
+            return Ok(new { url = redirectUrl }); // ✅ Trả về URL dưới dạng JSON
+        }
+
+        [Route("Customer/Invoice/Cancel/{id}")]
+        public async Task<IActionResult> Cancel(int id)
+        {
+            var result = await _invoice.Cancel(id);
+            return Json(result);
         }
     }
 }
+

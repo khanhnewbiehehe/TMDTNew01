@@ -1,4 +1,4 @@
-﻿
+﻿@model IEnumerable<ThuongMaiDienTu.Models.Invoice>
 
 <div class="container p-5">
     <div class="mt-3">
@@ -22,26 +22,58 @@
                 Đơn đặt hàng
             </div>
             <div class="card-body p-5">
-                <div class="card shadow order-item mb-3">
-                    <div class="row">
-                        <div class="col-3">
-                            <div class="card-image">
-                                <img src="/assets/images/product18.jpg" alt="Ảnh sản phẩm"></img>
+                @{
+                    if (!Model.Any() || Model == null)
+                    {
+                        <div class="card-image w-100 d-flex justify-content-center">
+                            <img src="/assets/images/empty.jpg" alt="Ảnh minh họa" />
+                        </div>
+                        <p class="text-center card-title">Hiện không đơn hàng nào của bạn được đặt</p>
+                    }
+                    foreach(var item in Model)
+                    {
+                        <div class="card shadow order-item mb-3">
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="card-image">
+                                        <img src="@item.InvoiceItems.FirstOrDefault().ProductType.ProductLaunch.Product.Images.FirstOrDefault().Url" alt="Ảnh sản phẩm"></img>
+                                    </div>
+                                </div>
+                                <div class="col-9">
+                                    <div class="card-body h-100 d-flex flex-column justify-content-between ">
+                                        <div class="d-flex justify-content-between">
+                                            <div class="card-title m-0 p-0">@item.InvoiceItems.FirstOrDefault().ProductType.ProductLaunch.Product.Name</div>
+                                            @if(item.Status == 0)
+                                            {
+                                                <div class="badge bg-warning m-0 p-2">Đã cọc</div>
+                                            }
+                                            else if(item.Status == -1)
+                                            {
+                                                <div class="badge bg-danger m-0 p-2">Hủy</div>
+                                            }
+                                            else if (item.Status == 1)
+                                            {
+                                                <div class="badge bg-success m-0 p-2">Đã thanh toán</div>
+                                            }
+                                            else if (item.Status == 2)
+                                            {
+                                                <div class="badge bg-primary m-0 p-2">Hoàn thành</div>
+                                            }
+                                            else
+                                            {
+                                                <div class="badge bg-dark m-0 p-2">Khác</div>
+                                            }
+                                        </div>
+                                        <div class="d-flex justify-content-end">
+                                            <a href="/Customer/Invoice/Details/@item.Id" class="btn btn-outline-primary">Xem chi tiết</a>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-9">
-                            <div class="card-body h-100 d-flex flex-column justify-content-between ">
-                                <div class="d-flex justify-content-between">
-                                    <div class="card-title m-0 p-0">Cơn gió mùa thu mát mẻ lướt qua tôi</div>
-                                    <div class="badge bg-warning m-0 p-2">Đã cọc</div>
-                                </div>
-                                <div class="d-flex justify-content-end">
-                                    <button class="btn btn-outline-primary">Xem chi tiết</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                    }
+                }
+                
             </div>
         </div>
     </div>
