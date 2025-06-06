@@ -23,6 +23,13 @@
             </div>
             <div class="card-body p-5">
                 @{
+                    if (!Model.Any() || Model == null)
+                    {
+                        <div class="card-image w-100 d-flex justify-content-center">
+                            <img src="/assets/images/empty.jpg" alt="Ảnh minh họa" />
+                        </div>
+                        <p class="text-center card-title">Hiện không đơn hàng nào của bạn được đặt</p>
+                    }
                     foreach(var item in Model)
                     {
                         <div class="card shadow order-item mb-3">
@@ -48,13 +55,17 @@
                                             {
                                                 <div class="badge bg-success m-0 p-2">Đã thanh toán</div>
                                             }
+                                            else if (item.Status == 2)
+                                            {
+                                                <div class="badge bg-primary m-0 p-2">Hoàn thành</div>
+                                            }
                                             else
                                             {
                                                 <div class="badge bg-dark m-0 p-2">Khác</div>
                                             }
                                         </div>
                                         <div class="d-flex justify-content-end">
-                                            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Xem chi tiết</button>
+                                            <a href="/Customer/Invoice/Details/@item.Id" class="btn btn-outline-primary">Xem chi tiết</a>
                                         </div>
                                     </div>
                                 </div>
@@ -68,39 +79,3 @@
     </div>
 </div>
 
-<div class="order-modal modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div>
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Chi tiết đơn đặt hàng</h1>
-                </div>    
-                <button type="button" data-bs-dismiss="modal" aria-label="Close">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="white" width="20px" viewBox="0 0 384 512">
-                        <path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" />
-                    </svg>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="card shadow mt-3 p-3">
-                    <div class="row">
-                        <div class="col-3">
-                            <div class="card-image shadow">
-                                <img src="/assets/images/product13.jpg" alt="Ảnh sản phẩm"></img>
-                            </div> 
-                        </div>
-                        <div class="col-9">
-                            <div><strong>Loại sản phẩm:</strong> Màu đỏ</div>
-                            <div><strong>Số lượng:</strong> 12</div>
-                        </div>
-                    </div>
-                    
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
-            </div>
-        </div>
-    </div>
-</div>

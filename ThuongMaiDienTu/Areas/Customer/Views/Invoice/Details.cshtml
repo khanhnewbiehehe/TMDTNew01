@@ -1,0 +1,159 @@
+﻿@model ThuongMaiDienTu.Models.Invoice
+
+<div class="container">
+    <div class="mt-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="/customer">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="blue" width="16px" class="me-2" viewBox="0 0 576 512">
+                            <path d="M575.8 255.5c0 18-15 32.1-32 32.1l-32 0 .7 160.2c0 2.7-.2 5.4-.5 8.1l0 16.2c0 22.1-17.9 40-40 40l-16 0c-1.1 0-2.2 0-3.3-.1c-1.4 .1-2.8 .1-4.2 .1L416 512l-24 0c-22.1 0-40-17.9-40-40l0-24 0-64c0-17.7-14.3-32-32-32l-64 0c-17.7 0-32 14.3-32 32l0 64 0 24c0 22.1-17.9 40-40 40l-24 0-31.9 0c-1.5 0-3-.1-4.5-.2c-1.2 .1-2.4 .2-3.6 .2l-16 0c-22.1 0-40-17.9-40-40l0-112c0-.9 0-1.9 .1-2.8l0-69.7-32 0c-18 0-32-14-32-32.1c0-9 3-17 10-24L266.4 8c7-7 15-8 22-8s15 2 21 7L564.8 231.5c8 7 12 15 11 24z" />
+                        </svg>
+                        Home
+                    </a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="/Customer/Invoice">
+                        Quản lý đơn hàng
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">Chi tiết đơn hàng</li>
+            </ol>
+        </nav>
+    </div>
+
+    <div class="mt-3">
+        <div class="order-details-card card shadow">
+            <div class="card-header">
+                Chi tiết đơn hàng
+            </div>
+            <div class="card-body px-5">
+                <div>
+                    <div><strong>Danh sách:</strong></div>
+                    @{
+                        int totalQuantity = 0;
+                        foreach(var item in Model.InvoiceItems)
+                        {
+                            <div class="card mb-3 shadow">
+                                <div class="row">
+                                    <div class="col-3">
+                                        <div class="card-image shadow">
+                                            <img src="@item.ProductType.ImageUrl" alt="Ảnh sản phẩm"></img>
+                                        </div>
+                                    </div>
+                                    <div class="col-9 py-3">
+                                        <div><strong>Loại sản phẩm: </strong>@item.ProductType.Name</div>
+                                        <div><strong>Số lượng: </strong>@item.Quantity</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            totalQuantity += item.Quantity;
+                        }
+                    }
+
+                </div>
+                <div class="mt-3">
+                    <div><strong>Ngày tạo: </strong>@Model.CreateAt.ToString("dd/MM/yyyy")</div>
+                    <div><strong>Địa chỉ: </strong>@Model.Address</div>
+                    <div><strong>Trạng thái:</strong>@{
+                            var trangthai = Model.Status == 0 ? "Đã cọc" :
+                              Model.Status == 1 ? "Đã thanh toán" :
+                                 Model.Status == 2 ? "Hoàn thành" :
+                                     Model.Status == -1 ? "Hủy" : "Khác";
+                        } 
+                        @trangthai
+                    </div>
+                    <div>
+                        <strong>Tổng tiền: </strong> @((ViewBag.CurrentPrice * totalQuantity).ToString("N0")) VNĐ
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="/Customer/Invoice" class="btn btn-secondary">Quay lại</a>
+                @{
+                    if(Model.InvoiceItems.FirstOrDefault().ProductType.ProductLaunch.DateEnd > DateTime.Now && Model.Status != -1)
+                    {
+                        <button onclick="Cancel(@Model.Id)" class="btn btn-danger">Hủy</button>
+                    }
+                    else if (Model.InvoiceItems.FirstOrDefault().ProductType.ProductLaunch.DateEnd <= DateTime.Now && Model.Status != 1 && Model.Status != 2 && Model.Status != -1)
+                    {
+                        <input hidden id="code" value=" @Model.Id"></input>
+                        <input hidden id="total" value="@(ViewBag.CurrentPrice * totalQuantity)"></input>
+                        <input hidden id="deposit" value="@Model.Deposit"></input>
+                        <button onClick="Payment()" class="btn btn-success">Thanh toán</button>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        function Payment() {
+            const total = parseFloat($('#total').val());
+            const code = parseInt($('#code').val());
+            const deposit = parseFloat($('#deposit').val());
+
+            $.ajax({
+                url: `/Customer/Invoice/Payment`,
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    PaymentCode: 'temp',
+                    ToTal: total,
+                    Deposit: deposit,
+                    id: code,
+                    userId: 'temp',
+                    address: 'temp',
+                    status: 0,
+                    createAt: new Date().toISOString()
+
+                }),
+                success: function (response) {
+                        if (response.url) {
+                            window.location.href = response.url; // ✅ Thực hiện redirect thủ công
+                        } else {
+                            alert("Không nhận được URL thanh toán.");
+                        }
+                },
+                error: function (xhr, status, error) {
+                    alert("Đã xảy ra lỗi khi thực hiện thanh toán: " + error);
+                }
+            });
+        }
+
+            function Cancel(id) {
+            Swal.fire({
+                title: 'Bạn có chắc chắn?',
+                text: "Bạn sẽ không thể hoàn tác hành động này!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Vâng, hủy đơn!',
+                cancelButtonText: 'Không'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: `/Customer/Invoice/Cancel/${id}`,
+                        method: 'POST',
+                        success: function (response) {
+                            if (response === true) {
+                                toastr.success("Hủy đơn hàng thành công.");
+                                // Tùy ý: load lại trang hoặc ẩn nút hủy
+                                setTimeout(() => location.reload(), 1000);
+                            } else {
+                                toastr.error("Hủy đơn hàng thất bại.");
+                            }
+                        },
+                        error: function () {
+                            toastr.error("Đã xảy ra lỗi trong quá trình xử lý.");
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+}
