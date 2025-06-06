@@ -138,7 +138,9 @@ namespace ThuongMaiDienTu.Areas.Customer.Controllers
         [Route("Customer/Invoice")]
         public async Task<IActionResult> Index()
         {
-            return View();
+            var user = await _userManager.GetUserAsync(User);
+            var list = await _invoice.ListByCustomer(user.Id);
+            return View(list);
         }
     }
 }

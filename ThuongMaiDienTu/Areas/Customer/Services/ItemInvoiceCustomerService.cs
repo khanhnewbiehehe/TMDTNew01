@@ -1,4 +1,5 @@
-﻿using ThuongMaiDienTu.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using ThuongMaiDienTu.Data;
 using ThuongMaiDienTu.Models;
 
 namespace ThuongMaiDienTu.Areas.Customer.Services
@@ -12,9 +13,17 @@ namespace ThuongMaiDienTu.Areas.Customer.Services
             _context = context;
         }
 
-        public Task<IEnumerable<Invoice>> ListByCustomer(string id)
+        public async Task<IEnumerable<Invoice>> ListByCustomer(string id)
         {
-            throw new NotImplementedException();
+            var list = await _context.Invoices.Include(x => x.InvoiceItems)
+                                                .ThenInclude(x => x.ProductType)
+                                                    .ThenInclude(x => x.ProductLaunch)
+                                                        .ThenInclude(x => x.Product)
+                                                            .ThenInclude(x => x.Images)
+                                              .Where(x => x.UserId == id && x.Status != -100)
+                                              .OrderByDescending(x => x.Id)
+                                              .ToListAsync();
+            return list;
         }
 
         public async Task<bool> Order(Invoice model)

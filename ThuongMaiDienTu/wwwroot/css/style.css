@@ -848,3 +848,35 @@
     font-weight: bold;
     font-size: 20px;
 }
+
+.order-modal .modal-content {
+    width: 600px;
+    border-radius: 0px;
+}
+
+.order-modal .modal-content .modal-header{
+    background-color: #1b6392;
+    border-radius: 0px;
+    color: white;
+    font-weight: bold;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.order-modal .modal-content .modal-header button{
+    background-color: #1b6392;
+    border: 0;
+}
+
+.order-modal .modal-content .modal-body .card .card-image{
+    width: 100px;
+    aspect-ratio: 1/1;
+    overflow: hidden;
+}
+
+.order-modal .modal-content .modal-body .card .card-image img{
+    width: 100%;
+    object-fit:cover;
+    object-position: center;
+}
