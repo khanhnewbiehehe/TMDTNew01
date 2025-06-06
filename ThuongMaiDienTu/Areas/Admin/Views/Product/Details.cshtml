@@ -1,0 +1,50 @@
+﻿@model ThuongMaiDienTu.Models.Product
+@{
+    ViewData["Title"] = "Chi tiết sản phẩm";
+}
+
+<div class="row">
+    <div class="content ms-2">
+        <a asp-action="Index" class="btn btn-outline-secondary mt-3">&lt; Quay lại</a>
+            <h2 class="my-3 text-center mb-4">Chi tiết sản phẩm</h2>
+
+            <dl class="row mb-4"> 
+                <dt class="col-sm-3 fw-bold">Tên sản phẩm</dt> 
+                <dd class="col-sm-9">@Model.Name</dd>
+
+                <dt class="col-sm-3 fw-bold">Mô tả</dt>
+                <dd class="col-sm-9">@Model.Description</dd>
+
+                <dt class="col-sm-3 fw-bold">Ngày tạo</dt>
+                <dd class="col-sm-9">@Model.CreateAt.ToString("dd/MM/yyyy")</dd>
+
+                <dt class="col-sm-3 fw-bold">Loại sản phẩm</dt>
+                <dd class="col-sm-9">@Model.Category?.Name</dd>
+
+                <dt class="col-sm-3 fw-bold">Hình ảnh</dt>
+                <dd class="col-sm-9">
+                    @if (Model.Images != null && Model.Images.Any())
+                    {
+                        <div class="row g-2"> 
+                            @foreach (var img in Model.Images)
+                            {
+                                <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                                <img src="@img.Url" class="card-img-top img-fluid" style="object-fit: fill; height: 200px;" alt="Product Image" />
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <span>(Không có hình ảnh)</span>
+                    }
+                </dd>
+            </dl>
+
+            <div class="d-flex justify-content-end gap-2 mt-4">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning px-5">
+                Chỉnh sửa sản phẩm
+                </a>
+            </div>
+        </div>
+    </div>

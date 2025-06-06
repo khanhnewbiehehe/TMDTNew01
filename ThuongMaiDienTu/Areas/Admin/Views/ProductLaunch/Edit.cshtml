@@ -1,0 +1,193 @@
+﻿@model ThuongMaiDienTu.Areas.Admin.ViewModels.ProductLaunchCreateViewModel
+
+@{
+    ViewData["Title"] = "Chỉnh sửa đợt mở bán";
+}
+<div class="row">
+    <div class="content ms-2">
+        <a asp-action="Index" class="btn btn-outline-secondary mt-3">&lt; Quay lại</a>
+        <h2 class="my-3 text-center mb-4">Chỉnh sửa đợt mở bán</h2>
+
+        <form asp-action="Edit" method="post" enctype="multipart/form-data">
+            <input type="hidden" asp-for="Id" />
+
+            <div class="mb-3">
+                <label>Tên đợt mở bán</label>
+                <input asp-for="LaunchName" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label>Mô tả</label>
+                <textarea asp-for="Description" class="form-control"></textarea>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="DateStart">Ngày bắt đầu</label>
+                        <input asp-for="DateStart" type="datetime-local" class="form-control" value="@Model.DateStart.ToString("yyyy-MM-ddTHH:mm")" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="DateEnd">Ngày kết thúc</label>
+                        <input asp-for="DateEnd" type="datetime-local" class="form-control" value="@Model.DateEnd.ToString("yyyy-MM-ddTHH:mm")" />
+                    </div>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label>Chọn sản phẩm</label>
+                <select asp-for="ProductId" class="form-control" asp-items="ViewBag.Products"></select>
+            </div>
+            <hr />
+            <h4>Loại sản phẩm</h4>
+            <div id="product-list">
+                @for (int i = 0; i < Model.ProductTypes.Count; i++)
+                {
+                    var pt = Model.ProductTypes[i];
+                    <div class="card mb-3 p-3 border product-block" id="product-@i">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h5>Loại sản phẩm #@(i + 1)</h5>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="removeProduct(@i)">Xóa loại sản phẩm</button>
+                        </div>
+                        <div class="mb-2">
+                            <label>Tên loại sản phẩm</label>
+                            <input name="ProductTypes[@i].Name" class="form-control" value="@pt.Name" />
+                        </div>
+                        <div class="mb-2">
+                            <label>Số lượng</label>
+                            <input name="ProductTypes[@i].Quantity" class="form-control" type="number" step="1" min="0" value="@pt.Quantity" />
+                        </div>
+                        <div class="mb-2">
+                            <label>Ảnh mới (nếu muốn thay)</label>
+                            <input name="ProductTypes[@i].ImageFile" type="file" class="form-control" />
+                            @if (!string.IsNullOrEmpty(pt.ImageUrl))
+                            {
+                                <p class="mt-1"><img src="@pt.ImageUrl" width="120" /></p>
+                            }
+                        </div>
+                        <input type="hidden" name="ProductTypes[@i].MaxPrice" value="@pt.MaxPrice" />
+                        <div class="copied-price-items" data-product-index="@i"></div>
+                    </div>
+                }
+            </div>
+            <button type="button" class="btn btn-success my-2" onclick="addProduct()">+ Thêm loại sản phẩm</button>
+            <hr />
+            <div class="mb-3">
+                <label>Giá ban đầu</label>
+                <input id="shared-max-price" class="form-control" type="number" min="0" value="@(Model.ProductTypes.FirstOrDefault()?.MaxPrice ?? 0)" />
+
+            </div>
+
+            <label>Giá ưu đãi</label>
+            <div id="shared-price-items" class="mb-3"></div>
+            <button type="button" class="btn btn-outline-primary btn-sm mb-2" onclick="addSharedPriceItem()" style="width:100%">+ Thêm mốc giá ưu đãi</button>
+
+            
+            
+            <button type="submit" class="btn btn-primary px-3 mt-3">Lưu thay đổi</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        let productIndex = @Model.ProductTypes.Count;
+        let existingPrices = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+        Model.ProductTypes.FirstOrDefault()?.PriceItems?.Select(p => new { quantity = p.Quantity, price = p.Price })
+    ?? Enumerable.Empty<object>()));
+
+            $(document).ready(function () {
+                existingPrices.forEach(item => {
+                    $('#shared-price-items').append(`
+                        <div class="row mb-1 align-items-center price-item-row">
+                            <div class="col">
+                                <input class="form-control" placeholder="Số lượng" type="number" min="0" required data-quantity value="${item.quantity}" />
+                            </div>
+                            <div class="col">
+                                <input class="form-control" placeholder="Giá" type="number" min="0" required data-price value="${item.price}" />
+                            </div>
+                            <div class="col-auto">
+                                <button type="button" class="btn btn-sm btn-danger" onclick="this.closest('.price-item-row').remove()">X</button>
+                            </div>
+                        </div>
+                    `);
+                });
+            });
+
+            function addSharedPriceItem() {
+                const container = $('#shared-price-items');
+                const html = `
+                    <div class="row mb-1 align-items-center price-item-row">
+                        <div class="col">
+                            <input class="form-control" placeholder="Số lượng" type="number" min="0" required data-quantity />
+                        </div>
+                        <div class="col">
+                            <input class="form-control" placeholder="Giá" type="number" min="0" required data-price />
+                        </div>
+                        <div class="col-auto">
+                            <button type="button" class="btn btn-sm btn-danger" onclick="this.closest('.price-item-row').remove()">X</button>
+                        </div>
+                    </div>
+                `;
+                container.append(html);
+            }
+                    function addProduct() {
+            const html = `
+                <div class="card mb-3 p-3 border product-block" id="product-${productIndex}">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5>Loại sản phẩm #${productIndex + 1}</h5>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="removeProduct(${productIndex})">Xóa loại sản phẩm</button>
+                    </div>
+                    <div class="mb-2">
+                        <label>Tên loại sản phẩm</label>
+                        <input name="ProductTypes[${productIndex}].Name" class="form-control" />
+                    </div>
+                    <div class="mb-2">
+                        <label>Số lượng</label>
+                        <input name="ProductTypes[${productIndex}].Quantity" class="form-control" type="number" step="1" min="0"/>
+                    </div>
+                    <div class="mb-2">
+                        <label>Ảnh</label>
+                        <input name="ProductTypes[${productIndex}].ImageFile" type="file" class="form-control" />
+                    </div>
+                    <div class="copied-price-items" data-product-index="${productIndex}"></div>
+                </div>
+            `;
+            $('#product-list').append(html);
+            productIndex++;
+        }
+
+        function removeProduct(index) {
+            $(`#product-${index}`).remove();
+        }
+
+            $('form').on('submit', function () {
+                const maxPrice = $('#shared-max-price').val();
+
+                $('.product-block').each(function () {
+                    const index = $(this).attr('id').split('-')[1];
+                    const input = `<input type="hidden" name="ProductTypes[${index}].MaxPrice" value="${maxPrice}" />`;
+                    $(this).append(input);
+                });
+
+                const sharedPrices = [];
+                $('#shared-price-items .price-item-row').each(function () {
+                    const quantity = $(this).find('[data-quantity]').val();
+                    const price = $(this).find('[data-price]').val();
+                    sharedPrices.push({ quantity, price });
+                });
+
+                $('.copied-price-items').each(function () {
+                    const productIndex = $(this).data('product-index');
+                    let html = '';
+                    for (let i = 0; i < sharedPrices.length; i++) {
+                        html += `
+                            <input type="hidden" name="ProductTypes[${productIndex}].PriceItems[${i}].Quantity" value="${sharedPrices[i].quantity}" />
+                            <input type="hidden" name="ProductTypes[${productIndex}].PriceItems[${i}].Price" value="${sharedPrices[i].price}" />
+                        `;
+                    }
+                    $(this).html(html);
+                });
+            });
+    </script>
+}

@@ -13,6 +13,7 @@ builder.Services.AddScoped<IFavouriteCustomerService, ItemFavouriteCustomerServi
 builder.Services.AddScoped<IInvoiceCustomerService, ItemInvoiceCustomerService>();
 builder.Services.AddScoped<IProductTypeCustomerService, ItemProductTypeCustomerService>();
 builder.Services.AddScoped<IVNPayService, VNPayService>();
+builder.Services.AddScoped<IFeaturedProductService, FeaturedProductService>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

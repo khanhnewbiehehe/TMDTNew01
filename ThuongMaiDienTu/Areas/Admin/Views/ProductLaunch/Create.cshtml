@@ -1,0 +1,137 @@
+﻿@model ThuongMaiDienTu.Areas.Admin.ViewModels.ProductLaunchCreateViewModel
+
+@{
+    ViewData["Title"] = "Tạo đợt mở bán";
+}
+<div class="row">
+    <div class="content ms-2">
+        <a asp-action="Index" class="btn btn-outline-secondary mt-3">&lt; Quay lại</a>
+        <h2 class="my-3 text-center mb-4">Tạo đợt mở bán</h2>
+
+        <form asp-action="Create" method="post" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label>Tên đợt mở bán</label>
+                <input asp-for="LaunchName" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label>Mô tả</label>
+                <textarea asp-for="Description" class="form-control"></textarea>
+            </div>
+            <div class="mb-3">
+                <label>Ngày bắt đầu</label>
+                <input asp-for="DateStart" type="datetime-local" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label>Ngày kết thúc</label>
+                <input asp-for="DateEnd" type="datetime-local" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Chọn sản phẩm</label>
+                <select asp-for="ProductId" class="form-control" asp-items="ViewBag.Products"></select>
+                <span asp-validation-for="ProductId" class="text-danger"></span>
+            </div>
+            <hr />
+            <h4>Loại sản phẩm</h4>
+            <div id="product-list"></div>
+            <button type="button" class="btn btn-success my-2" onclick="addProduct()">+ Thêm loại sản phẩm</button>
+            
+            <hr />
+            <div class="mb-3">
+                <label class="form-label">Giá ban đầu</label>
+                <input id="shared-max-price" class="form-control" type="number" min="0" name="SharedMaxPrice" />
+            </div>
+            <label>Giá ưu đãi</label>
+            <div id="shared-price-items" class="mb-3"></div>
+            <button type="button" class="btn btn-outline-primary btn-sm mb-2" onclick="addSharedPriceItem()" style="width:100%">+ Thêm mốc giá ưu đãi</button>
+
+            <button type="submit" class="btn btn-primary px-3 mt-3">Thêm đợt mở bán</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        let productIndex = 0;
+
+        function addSharedPriceItem() {
+            const container = $('#shared-price-items');
+            const html = `
+                <div class="row mb-1 align-items-center price-item-row">
+                    <div class="col">
+                        <input class="form-control" placeholder="Số lương sản phẩm khi đạt mốc" type="number" min="0" required data-quantity />
+                    </div>
+                    <div class="col">
+                        <input class="form-control" placeholder="Giá giảm" type="number" min="0" required data-price />
+                    </div>
+                    <div class="col-auto">
+                        <button type="button" class="btn btn-sm btn-danger" onclick="this.closest('.price-item-row').remove()">X</button>
+                    </div>
+                </div>
+            `;
+            container.append(html);
+        }
+
+        function addProduct() {
+            const html = `
+                <div class="card mb-3 p-3 border product-block" id="product-${productIndex}">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5>Loại sản phẩm #${productIndex + 1}</h5>
+                        <button type="button" class="btn btn-danger btn-sm" onclick="removeProduct(${productIndex})">Xóa loại sản phẩm</button>
+                    </div>
+                    <div class="mb-2">
+                        <label>Tên loại sản phẩm</label>
+                        <input name="ProductTypes[${productIndex}].Name" class="form-control" />
+                    </div>
+                    <div class="mb-2">
+                        <label>Số lượng</label>
+                        <input name="ProductTypes[${productIndex}].Quantity" class="form-control" type="number" step="1" min="0"/>
+                    </div>
+                    <div class="mb-2">
+                        <label>Ảnh</label>
+                        <input name="ProductTypes[${productIndex}].ImageFile" type="file" class="form-control" />
+                    </div>
+
+                    <div class="copied-price-items" data-product-index="${productIndex}"></div>
+                </div>
+            `;
+            $('#product-list').append(html);
+            productIndex++;
+        }
+
+        function removeProduct(index) {
+            $(`#product-${index}`).remove();
+        }
+
+        // Khi submit form, gắn MaxPrice + mốc giá vào từng loại sản phẩm
+        $('form').on('submit', function () {
+            const maxPrice = $('#shared-max-price').val();
+
+            $('.product-block').each(function () {
+                const index = $(this).attr('id').split('-')[1];
+                const input = `<input type="hidden" name="ProductTypes[${index}].MaxPrice" value="${maxPrice}" />`;
+                $(this).append(input);
+            });
+
+            const sharedPrices = [];
+            $('#shared-price-items .price-item-row').each(function () {
+                const quantity = $(this).find('[data-quantity]').val();
+                const price = $(this).find('[data-price]').val();
+                sharedPrices.push({ quantity, price });
+            });
+
+            $('.copied-price-items').each(function () {
+                const productIndex = $(this).data('product-index');
+                let html = '';
+                for (let i = 0; i < sharedPrices.length; i++) {
+                    html += `
+                        <input type="hidden" name="ProductTypes[${productIndex}].PriceItems[${i}].Quantity" value="${sharedPrices[i].quantity}" />
+                        <input type="hidden" name="ProductTypes[${productIndex}].PriceItems[${i}].Price" value="${sharedPrices[i].price}" />
+                    `;
+                }
+                $(this).html(html);
+            });
+        });
+    </script>
+}
+

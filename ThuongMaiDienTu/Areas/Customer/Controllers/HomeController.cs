@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ThuongMaiDienTu.Areas.Customer.Models;
+using ThuongMaiDienTu.Areas.Customer.Services;
 
 namespace ThuongMaiDienTu.Areas.Customer.Controllers
 {
@@ -11,15 +12,19 @@ namespace ThuongMaiDienTu.Areas.Customer.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IFeaturedProductService _featuredProductService;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IFeaturedProductService featuredProductService)
         {
             _logger = logger;
+            _featuredProductService = featuredProductService;
         }
+        
         [Route("customer")]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var featuredProduct = await _featuredProductService.GetFeaturedProduct();
+            return View(featuredProduct);
         }
 
         public IActionResult Privacy()

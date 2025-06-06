@@ -19,7 +19,7 @@ public class AccountController(SignInManager<AppUser> signInManager, UserManager
             var roles = await userManager.GetRolesAsync(user);
             if (roles.Contains("Admin"))
             {
-                return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+                return RedirectToAction("Index", "Home", new { area = "Admin" });
             }
             else
             {
@@ -52,7 +52,7 @@ public class AccountController(SignInManager<AppUser> signInManager, UserManager
                     var roles = await userManager.GetRolesAsync(user);
                     if (roles.Contains("Admin"))
                     {
-                        return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+                        return RedirectToAction("Index", "Home", new { area = "Admin" });
                     }
                     else
                     {

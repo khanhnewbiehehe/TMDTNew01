@@ -97,9 +97,9 @@
 
 .my_card {
     box-shadow: 0 2px 12px rgba(0,0,0,0.1);
-    border-radius: 20px;
+    border-radius: 6px;
     overflow: hidden;
-    margin: 10px;
+    margin: 6px;
     width: 10rem;
     position: relative;
 }
@@ -735,6 +735,7 @@
     border-radius: 0px;
 }
 
+<<<<<<< HEAD
 .information-card .card-header{
     border-radius: 0px;
     background-color: #1b6392;
@@ -771,6 +772,7 @@
     border-radius: 0px;
 }
 
+
 .order-card .card-header{
     border-radius: 0px;
     background-color: #1b6392;
@@ -801,6 +803,7 @@
     object-position: center;
 }
 
+
 .result-card {
     width: 600px;
     padding: 64px;
@@ -825,6 +828,7 @@
     border-radius: 0px;
 }
 
+
 .cart-card .card-header{
     border-radius: 0px;
     background-color: #1b6392;
@@ -844,6 +848,7 @@
     object-fit:cover;
     object-position: center;
 }
+
 
 .order-item .card-title {
     color: #1b6392;
