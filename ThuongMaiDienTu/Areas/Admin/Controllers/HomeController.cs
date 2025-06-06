@@ -20,7 +20,14 @@ namespace ThuongMaiDienTu.Areas.Admin.Controllers
         {
             return View();
         }
-
+        public IActionResult Contact()
+        {
+            return View();
+        }
+        public IActionResult About()
+        {
+            return View();
+        }
         public IActionResult Privacy()
         {
             return View();
@@ -31,5 +38,6 @@ namespace ThuongMaiDienTu.Areas.Admin.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
     }
 }

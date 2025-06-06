@@ -18,7 +18,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\Admin\Services\" />
     <Folder Include="Areas\Customer\ViewModels\" />
     <Folder Include="wwwroot\Uploads\" />
   </ItemGroup>

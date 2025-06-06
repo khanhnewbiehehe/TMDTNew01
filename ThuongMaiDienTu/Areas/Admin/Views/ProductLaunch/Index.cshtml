@@ -1,0 +1,94 @@
+﻿@model IEnumerable<ThuongMaiDienTu.Areas.Admin.ViewModels.ProductLaunchViewModel>
+
+@{
+    ViewData["Title"] = "Danh sách đợt mở bán";
+}
+
+<div class="row">
+    <div class="content ms-2">
+        <h2 class="my-3 text-center mb-4">Danh sách đợt mở bán</h2>
+
+        <a class="btn btn-primary mb-3" asp-action="Create">+ Thêm đợt mở bán</a>
+        @if (TempData["DeleteError"] != null)
+        {
+            <div class="alert alert-danger">
+                @TempData["DeleteError"]
+            </div>
+        }
+        else if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped display responsive nowrap" style="width:100%" id="auctionTable">
+                <thead>
+                    <tr>
+                        <th data-priority="1">Tên đợt mở bán</th>
+                        <th data-priority="6">Sản phẩm</th>
+                        <th data-priority="5">Ngày bắt đầu</th>
+                        <th data-priority="4">Ngày kết thúc</th>
+                        <th data-priority="3">Trạng thái</th>
+                        <th data-priority="2">Chức năng</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Name</td>
+                            <td>@item.ProductName</td>
+                            <td>@item.DateStart.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>@item.DateEnd.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>
+                                @switch (item.Status)
+                                {
+                                    case "Sắp mở":
+                                        <span class="badge bg-warning text-dark">Sắp mở</span>
+                                        break;
+                                    case "Đang mở":
+                                        <span class="badge bg-success">Đang mở</span>
+                                        break;
+                                    default:
+                                        <span class="badge bg-secondary">Kết thúc</span>
+                                        break;
+                                }
+                            </td>
+                            <td>
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">Xem</a>
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Sửa</a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm"
+                                   onclick="return confirm('Bạn có chắc muốn xóa đợt mở bán này?');">
+                                    Xóa
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#auctionTable').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Vietnamese.json"
+                },
+                "paging": true,
+                "ordering": true,
+                "info": true,
+                "searching": true,
+                "responsive": true
+            });
+
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            })
+        });
+    </script>
+}
