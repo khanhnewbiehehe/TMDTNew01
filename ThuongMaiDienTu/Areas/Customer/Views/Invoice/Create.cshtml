@@ -1,102 +1,271 @@
 ﻿@model ThuongMaiDienTu.Models.Invoice
+@using ThuongMaiDienTu.Models
 
-<div class="container p-5">
-    <div class="mt-3">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item">
-                    <a href="/">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="blue" width="16px" class="me-2" viewBox="0 0 576 512">
-                            <path d="M575.8 255.5c0 18-15 32.1-32 32.1l-32 0 .7 160.2c0 2.7-.2 5.4-.5 8.1l0 16.2c0 22.1-17.9 40-40 40l-16 0c-1.1 0-2.2 0-3.3-.1c-1.4 .1-2.8 .1-4.2 .1L416 512l-24 0c-22.1 0-40-17.9-40-40l0-24 0-64c0-17.7-14.3-32-32-32l-64 0c-17.7 0-32 14.3-32 32l0 64 0 24c0 22.1-17.9 40-40 40l-24 0-31.9 0c-1.5 0-3-.1-4.5-.2c-1.2 .1-2.4 .2-3.6 .2l-16 0c-22.1 0-40-17.9-40-40l0-112c0-.9 0-1.9 .1-2.8l0-69.7-32 0c-18 0-32-14-32-32.1c0-9 3-17 10-24L266.4 8c7-7 15-8 22-8s15 2 21 7L564.8 231.5c8 7 12 15 11 24z" />
-                        </svg>
-                        Home
-                    </a>
-                </li>
-                <li class="breadcrumb-item active" aria-current="page">Hóa đơn sản phẩm</li>
-            </ol>
-        </nav>
-    </div>
+@{
+    // Check if Model is null to prevent null reference exceptions
+    if (Model == null)
+    {
+        ViewData["Title"] = "Lỗi - Hóa đơn không tồn tại";
+        <div class="alert alert-danger">
+            <h4>Lỗi</h4>
+            <p>Không thể tải thông tin hóa đơn. Vui lòng thử lại.</p>
+            <a href="/" class="btn btn-primary">Quay về trang chủ</a>
+        </div>
+        return;
+    }
+}
 
-    <div class="mt-3">
-        <div class="card order-card shadow mx-auto">
-            <form asp-action="Create" asp-controller="Invoice" asp-area="Customer">
-                <div class="card-header">
-                    Thông tin thanh toán
-                </div>
-                <div class="card-body">
-                    <div>
-                        <label asp-for="Address"><strong>Địa chỉ: </strong></label>
-                        <textarea asp-for="Address" class="form-control"></textarea>
-                        <span asp-validation-for="Address" class="text-danger"></span>
-                    </div>
-                    <div class="mt-3">
-                        <strong>Sản phẩm: </strong>
-                        <div class="d-flex flex-column">
-                            @{
-                                foreach (var item in Model.InvoiceItems)
-                                {
-                                    <div class="card order-item shadow p-3 mt-2">
-                                        <div class="row">
-                                            <div class="col-3">
-                                                <div class="card-image shadow">
-                                                    <img src="@item.ProductType.ImageUrl" alt="Ảnh sản phẩm"></img>
-                                                </div>
-                                            </div>
-                                            <div class="col-9">
-                                                <div class="card-body h-100">
-                                                    <div class=" h-100 d-flex flex-column justify-content-between">
-                                                        <div class="card-title">@item.ProductType.Name</div>
-                                                        <div class="w-100 text-end"><strong>Số lượng: </strong> @item.Quantity</div>
+@section Styles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="~/css/invoice.css">
+}
+
+<div class="invoice-container">
+    <div class="container">
+        <div class="mt-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="/">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="blue" width="16px" class="me-2" viewBox="0 0 576 512">
+                                <path d="M575.8 255.5c0 18-15 32.1-32 32.1l-32 0 .7 160.2c0 2.7-.2 5.4-.5 8.1l0 16.2c0 22.1-17.9 40-40 40l-16 0c-1.1 0-2.2 0-3.3-.1c-1.4 .1-2.8 .1-4.2 .1L416 512l-24 0c-22.1 0-40-17.9-40-40l0-24 0-64c0-17.7-14.3-32-32-32l-64 0c-17.7 0-32 14.3-32 32l0 64 0 24c0 22.1-17.9 40-40 40l-24 0-31.9 0c-1.5 0-3-.1-4.5-.2c-1.2 .1-2.4 .2-3.6 .2l-16 0c-22.1 0-40-17.9-40-40l0-112c0-.9 0-1.9 .1-2.8l0-69.7-32 0c-18 0-32-14-32-32.1c0-9 3-17 10-24L266.4 8c7-7 15-8 22-8s15 2 21 7L564.8 231.5c8 7 12 15 11 24z" />
+                            </svg>
+                            Trang chủ
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        <i class="fas fa-file-invoice-dollar me-1"></i>
+                        Xác nhận hóa đơn
+                    </li>
+                </ol>
+            </nav>
+        </div>
+
+        <div class="mt-4">
+            <div class="card invoice-card shadow mx-auto" style="max-width: 1000px;">
+                <form asp-action="Create" asp-controller="Invoice" asp-area="Customer" id="invoiceForm">
+                    <div class="invoice-header">
+                        <h4><i class="fas fa-file-invoice me-3"></i>Xác nhận thông tin hóa đơn</h4>
+                        <p class="mb-0 mt-2 opacity-75">Vui lòng kiểm tra thông tin trước khi thanh toán</p>                    </div><div class="card-body">
+                        <!-- Địa chỉ giao hàng -->
+                        <div class="mb-4">
+                            <div class="bg-light p-4 rounded">
+                                <h6 class="mb-3 text-primary"><i class="fas fa-map-marker-alt me-2"></i>Địa chỉ giao hàng</h6>
+                                <div class="form-group">
+                                    <label for="address" class="form-label fw-bold">Địa chỉ nhận hàng <span class="text-danger">*</span></label>
+                                    <textarea asp-for="Address" class="form-control" id="address" rows="3" 
+                                              placeholder="Nhập địa chỉ chi tiết để giao hàng..." 
+                                              required style="resize: vertical;"></textarea>
+                                    <span asp-validation-for="Address" class="text-danger"></span>
+                                    <small class="form-text text-muted">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        Vui lòng nhập địa chỉ chính xác để đảm bảo giao hàng thành công
+                                    </small>
+                                </div>
+                            </div>
+                        </div>                        <!-- Danh sách sản phẩm -->
+                    <div class="mt-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="info-icon me-0">
+                                <i class="fas fa-shopping-cart"></i>
+                            </div>
+                            <h6 class="mb-0 ms-3 text-primary fw-bold">Danh sách sản phẩm đặt cọc</h6>
+                        </div>
+                        <div class="product-table">
+                            <table class="table table-hover mb-0">
+                                <thead>
+                                    <tr>
+                                        <th><i class="fas fa-box-open me-2"></i>Sản phẩm</th>
+                                        <th class="text-center"><i class="fas fa-sort-numeric-up me-1"></i>Số lượng</th>
+                                        <th class="text-end"><i class="fas fa-tag me-1"></i>Đơn giá</th>
+                                        <th class="text-end"><i class="fas fa-calculator me-1"></i>Thành tiền</th>
+                                    </tr>
+                                </thead>                                <tbody>
+                                    @{
+                                        decimal totalAmount = 0;
+                                        foreach (var item in Model.InvoiceItems ?? new ThuongMaiDienTu.Models.InvoiceItem[0])
+                                        {
+                                            totalAmount += item.Amount;
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex align-items-center">                                                        <img src="@(item.ProductType?.ImageUrl ?? "/images/no-image.png")" alt="@(item.ProductType?.Name ?? "Sản phẩm")" 
+                                                             class="rounded me-3 product-image" style="width: 60px; height: 60px; object-fit: cover;">                                                        <div>
+                                                            <div class="fw-bold">@(item.ProductType?.Name ?? "Không xác định")</div>                                                            <small class="text-muted">
+                                                                Loại: @(item.ProductType?.ProductLaunch?.Product?.Name ?? "Không xác định")
+                                                            </small>
+                                                        </div>
                                                     </div>
-
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                }
-                            }
-
+                                                </td>
+                                                <td class="text-center align-middle">
+                                                    <span class="badge bg-secondary">@item.Quantity</span>
+                                                </td>                                                <td class="text-end align-middle">
+                                                    @((item.Quantity > 0 ? (item.Amount / item.Quantity) : 0).ToString("N0")) VNĐ
+                                                </td>
+                                                <td class="text-end align-middle fw-bold">
+                                                    @item.Amount.ToString("N0") VNĐ
+                                                </td>
+                                            </tr>
+                                        }
+                                        
+                                        decimal deposit = totalAmount * 0.3m;
+                                    }
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-                    <div class="mt-3">
-                        <div class="d-flex justify-content-between">
-                            <div><strong>Tiền cọc: </strong></div>
-                            <div class="fw-bold text-success">
-                                @{
-                                    decimal total = 0;
-                                    foreach (var item in Model.InvoiceItems)
-                                    {
-                                        total += item.Amount;
-                                    }
-                                    decimal deposit = total * 0.3m;
-                                }
 
-                                @deposit.ToString("N0")
+                    <!-- Thông tin thanh toán -->
+                    <div class="mt-4">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="alert alert-info">
+                                    <h6 class="alert-heading"><i class="fas fa-info-circle me-2"></i>Lưu ý thanh toán</h6>
+                                    <ul class="mb-0">
+                                        <li>Bạn chỉ cần thanh toán <strong>30% tiền cọc</strong> để đặt hàng</li>
+                                        <li>Số tiền còn lại sẽ được thanh toán khi nhận hàng</li>
+                                        <li>Hóa đơn sẽ được xử lý trong vòng 24h sau khi thanh toán</li>
+                                    </ul>
+                                </div>
+                            </div>                            <div class="col-md-4">
+                                <div class="payment-summary">
+                                    <div class="text-center mb-3">
+                                        <h6 class="text-white mb-0">
+                                            <i class="fas fa-calculator me-2"></i>Tổng kết thanh toán
+                                        </h6>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2 pb-2 border-bottom border-light border-opacity-25">
+                                        <span><i class="fas fa-shopping-bag me-2"></i>Tổng giá trị:</span>
+                                        <span class="fw-bold">@totalAmount.ToString("N0") VNĐ</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-3 pb-2 border-bottom border-light border-opacity-25">
+                                        <span><i class="fas fa-percentage me-2"></i>Tỷ lệ cọc:</span>
+                                        <span class="fw-bold fs-5 text-warning">30%</span>
+                                    </div>
+                                    <div class="text-center">                                        <div class="payment-amount mb-2">
+                                            @deposit.ToString("N0") VNĐ
+                                        </div>
+                                        <small class="opacity-75">
+                                            <i class="fas fa-info-circle me-1"></i>
+                                            Còn lại: @((totalAmount - deposit).ToString("N0")) VNĐ
+                                        </small>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                    <input hidden asp-for="UserId"></input>
+                </div>                    <input hidden asp-for="UserId"></input>
                     <input hidden asp-for="Status"></input>
                     <input hidden asp-for="CreateAt"></input>
                    
                     <input hidden asp-for="Deposit" value="@deposit"></input>
-                    <input hidden asp-for="PaymentCode" value="temp"></input>
-                @{
+                    <input hidden asp-for="PaymentCode" value="HD@DateTime.Now.ToString("yyyyMMddHHmmss")"></input>                @{
                     var i = 0;
-                    foreach(var item in Model.InvoiceItems)
+                    if (Model?.InvoiceItems != null)
                     {
-                        <input hidden name="InvoiceItems[@i].ProductTypeId" value="@item.ProductTypeId"></input>
-                        <input hidden name="InvoiceItems[@i].Quantity" value="@item.Quantity"></input>
-                        <input hidden name="InvoiceItems[@i].Amount" value="@item.Amount"></input>
-                        i++;
+                        foreach(var item in Model.InvoiceItems)
+                        {
+                            if (item != null)
+                            {
+                                <input hidden name="InvoiceItems[@i].ProductTypeId" value="@item.ProductTypeId"></input>
+                                <input hidden name="InvoiceItems[@i].Quantity" value="@item.Quantity"></input>
+                                <input hidden name="InvoiceItems[@i].Amount" value="@item.Amount"></input>
+                                i++;
+                            }
+                        }
                     }
-                }
-                <div class="card-footer">
-                    <button type="submit" class="btn btn-success w-100">Đặt cọc</button>
-                </div>
-            </form>      
+                }<div class="card-footer bg-transparent p-4">
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-payment btn-lg py-3 position-relative">
+                            <i class="fas fa-credit-card me-2"></i>
+                            <span class="fw-bold">Xác nhận đặt cọc @deposit.ToString("N0") VNĐ</span>
+                            <div class="spinner-border spinner-border-sm ms-2 d-none" role="status" id="paymentSpinner">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="security-info text-center mt-3">
+                        <small class="text-muted d-flex align-items-center justify-content-center">
+                            <i class="fas fa-shield-alt text-success me-2"></i>
+                            Thanh toán được bảo mật với SSL 256-bit
+                            <i class="fas fa-lock text-primary ms-2"></i>
+                        </small>
+                    </div>
+                </div>                </form>      
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script src="~/js/invoice.js"></script>
+    <script>
+        // Add invoice-specific validation and functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('invoiceForm');
+            const addressField = document.getElementById('address');
+            const submitButton = form.querySelector('button[type="submit"]');
+            
+            // Address validation
+            function validateAddress() {
+                const address = addressField.value.trim();
+                if (address.length < 10) {
+                    addressField.classList.add('is-invalid');
+                    return false;
+                } else {
+                    addressField.classList.remove('is-invalid');
+                    addressField.classList.add('is-valid');
+                    return true;
+                }
+            }
+            
+            // Real-time address validation
+            addressField.addEventListener('input', validateAddress);
+            addressField.addEventListener('blur', validateAddress);
+            
+            // Form submission with validation
+            form.addEventListener('submit', function(e) {
+                if (!validateAddress()) {
+                    e.preventDefault();
+                    addressField.focus();
+                    
+                    // Show error message
+                    const existingError = addressField.parentNode.querySelector('.address-error');
+                    if (!existingError) {
+                        const errorDiv = document.createElement('div');
+                        errorDiv.className = 'address-error text-danger mt-1';
+                        errorDiv.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i>Vui lòng nhập địa chỉ chi tiết (ít nhất 10 ký tự)';
+                        addressField.parentNode.appendChild(errorDiv);
+                    }
+                    return false;
+                }
+                
+                // Remove any error messages
+                const errorDiv = addressField.parentNode.querySelector('.address-error');
+                if (errorDiv) {
+                    errorDiv.remove();
+                }
+                
+                // Show loading state
+                const spinner = document.getElementById('paymentSpinner');
+                if (spinner) {
+                    spinner.classList.remove('d-none');
+                    submitButton.disabled = true;
+                }
+            });
+            
+            // Add print functionality
+            const printBtn = document.createElement('button');
+            printBtn.type = 'button';
+            printBtn.className = 'btn btn-outline-primary btn-sm ms-2';
+            printBtn.innerHTML = '<i class="fas fa-print me-1"></i>In hóa đơn';
+            printBtn.addEventListener('click', function() {
+                window.print();
+            });
+            
+            const breadcrumb = document.querySelector('.breadcrumb');
+            if (breadcrumb) {
+                breadcrumb.parentNode.appendChild(printBtn);
+            }
+        });
+    </script>
+}
