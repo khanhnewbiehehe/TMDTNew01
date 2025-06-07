@@ -64,7 +64,7 @@
                                 <p class="mt-1"><img src="@pt.ImageUrl" width="120" /></p>
                             }
                         </div>
-                        <input type="hidden" name="ProductTypes[@i].MaxPrice" value="@pt.MaxPrice" />
+                        <input type="hidden" name="ProductTypes[@i].ImageUrl" value="@pt.ImageUrl" />
                         <div class="copied-price-items" data-product-index="@i"></div>
                     </div>
                 }
@@ -74,7 +74,6 @@
             <div class="mb-3">
                 <label>Giá ban đầu</label>
                 <input id="shared-max-price" class="form-control" type="number" min="0" value="@(Model.ProductTypes.FirstOrDefault()?.MaxPrice ?? 0)" />
-
             </div>
 
             <label>Giá ưu đãi</label>
