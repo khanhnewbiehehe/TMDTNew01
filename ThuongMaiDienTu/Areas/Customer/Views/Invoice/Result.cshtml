@@ -1,17 +1,124 @@
-﻿<div class="container">
-    <div class="result-card card shadow">
-        @{
-            if(ViewBag.Result == 0)
+﻿@{
+    ViewData["Title"] = ViewBag.Result == 0 ? "Thanh toán thất bại" : "Thanh toán thành công";
+    bool isSuccess = ViewBag.Result != 0;
+}
+
+<link href="~/css/payment-result.css" rel="stylesheet" />
+
+<div class="payment-result-container">
+    <!-- Floating decoration elements -->
+    <div class="floating-shape shape-1">
+        <svg width="60" height="60" viewBox="0 0 24 24" fill="currentColor">
+            <circle cx="12" cy="12" r="10"/>
+        </svg>
+    </div>
+    <div class="floating-shape shape-2">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
+            <polygon points="12,2 22,20 2,20"/>
+        </svg>
+    </div>
+    <div class="floating-shape shape-3">
+        <svg width="50" height="50" viewBox="0 0 24 24" fill="currentColor">
+            <rect x="3" y="3" width="18" height="18" rx="3"/>
+        </svg>
+    </div>
+
+    <div class="result-card @(isSuccess ? "success" : "failed")">
+        <!-- Result Icon -->
+        <div class="result-icon @(isSuccess ? "success" : "failed")">
+            @if (isSuccess)
             {
-                <img src="/assets/images/failed.jpg"></img>
-                <p>Thanh toán thất bại !</p>
+                <!-- Success Icon -->
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                </svg>
             }
             else
             {
-                <img src="/assets/images/success.png"></img>
-                <p>Thanh toán thành công !</p>
+                <!-- Error Icon -->
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                </svg>
             }
-        }
-        <a href="/customer" class="btn btn-secondary mt-4">Quay lại</a>
+        </div>
+
+        <!-- Result Title -->
+        <h1 class="result-title @(isSuccess ? "success" : "failed")">
+            @if (isSuccess)
+            {
+                <text>Thanh toán thành công!</text>
+            }
+            else
+            {
+                <text>Thanh toán thất bại!</text>
+            }
+        </h1>
+
+        <!-- Result Message -->
+        <p class="result-message">
+            @if (isSuccess)
+            {
+                <text>Cảm ơn bạn đã đặt hàng. Đơn hàng của bạn đã được xử lý thành công và chúng tôi sẽ liên hệ với bạn sớm nhất có thể.</text>
+            }
+            else
+            {
+                <text>Rất tiếc, giao dịch của bạn không thể hoàn tất. Vui lòng kiểm tra lại thông tin thanh toán hoặc thử lại sau.</text>
+            }
+        </p>
+
+        <!-- Action Buttons -->
+        <div class="result-actions">
+            @if (isSuccess)
+            {
+                <!-- Success Actions -->
+                <a href="@Url.Action("Index", "Invoice")" class="result-btn primary">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                    </svg>
+                    Xem đơn hàng
+                </a>
+                <a href="/Customer" class="result-btn secondary">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                    </svg>
+                    Về trang chủ
+                </a>
+            }
+            else
+            {
+                <!-- Failed Actions -->
+                <a href="javascript:history.back()" class="result-btn primary">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M13.5 7H8v3l-4-4 4-4v3h5.5c3.04 0 5.5 2.46 5.5 5.5s-2.46 5.5-5.5 5.5H5v-2h8.5c1.93 0 3.5-1.57 3.5-3.5S15.43 7 13.5 7z"/>
+                    </svg>
+                    Thử lại
+                </a>
+                <a href="/Customer" class="result-btn secondary">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                    </svg>
+                    Về trang chủ
+                </a>
+            }
+        </div>
     </div>
 </div>
+
+<script>
+    // Add smooth animations and interactions
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add loading state to buttons when clicked
+        const buttons = document.querySelectorAll('.result-btn');
+        buttons.forEach(button => {
+            button.addEventListener('click', function() {
+                this.classList.add('loading');
+            });
+        });
+
+        // Add floating animation to shapes
+        const shapes = document.querySelectorAll('.floating-shape');
+        shapes.forEach((shape, index) => {
+            shape.style.animationDelay = (index * 2) + 's';
+        });
+    });
+</script>
