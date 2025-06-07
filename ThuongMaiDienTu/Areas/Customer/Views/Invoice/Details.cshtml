@@ -45,10 +45,6 @@
                             <div class="bg-light p-3 rounded invoice-info-card">
                                 <h6 class="mb-3 text-primary"><i class="fas fa-receipt me-2"></i>Thông tin hóa đơn</h6>
                                 <div class="mb-2">
-                                    <strong>Mã hóa đơn:</strong> 
-                                    <span class="text-muted">HD@Model.Id.ToString("00000")</span>
-                                </div>
-                                <div class="mb-2">
                                     <strong>Ngày tạo:</strong> 
                                     <span class="text-muted">@Model.CreateAt.ToString("dd/MM/yyyy HH:mm")</span>
                                 </div>
@@ -208,7 +204,7 @@
                                     {
                                         <div class="d-flex justify-content-between mb-2 pb-2 border-bottom border-light border-opacity-25">
                                             <span><i class="fas fa-chart-line me-2"></i>Giá hiện tại:</span>
-                                            <span class="fw-bold text-info">@currentTotalAmount.ToString("N0") VNĐ</span>
+                                            <span class="fw-bold">@currentTotalAmount.ToString("N0") VNĐ</span>
                                         </div>
                                     }
                                     <div class="d-flex justify-content-between mb-2 pb-2 border-bottom border-light border-opacity-25">
