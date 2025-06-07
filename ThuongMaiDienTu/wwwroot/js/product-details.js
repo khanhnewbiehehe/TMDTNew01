@@ -115,10 +115,11 @@ function updateTotal() {
     if (achievedPrices.length > 0) {
         currentPrice = Math.min(...achievedPrices.map(p => p.Price));
     }
-      // Calculate final value using current price level
+    
+    // Calculate final value using current price level
     const finalValue = total * currentPrice;
     
-    // Calculate deposit (30% of final value)
+    // Calculate deposit (30% of max price value for risk coverage)
     const depositAmount = totalValue * 0.3;
     
     // Update display
@@ -343,16 +344,16 @@ function StartOrder() {
             text: stockErrorMessage,
         });
         return;
-    }    const items = [];
-    const maxPrice = parseInt(document.getElementById('GiaTien').value);
-    
+    }
+
+    const items = [];
     document.querySelectorAll(".quantity").forEach(input => {
         const quantity = parseInt(input.value || 0);
         if (quantity > 0) {
             items.push({
                 productTypeId: parseInt(input.dataset.typeid),
                 quantity: quantity,
-                amount: quantity * maxPrice // Use max price for deposit calculation
+                amount: quantity * $('#GiaTien').val()
             });
         }
     });

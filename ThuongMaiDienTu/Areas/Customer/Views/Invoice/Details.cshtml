@@ -1,100 +1,303 @@
 ﻿@model ThuongMaiDienTu.Models.Invoice
 
-<div class="container">
-    <div class="mt-3">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item">
-                    <a href="/customer">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="blue" width="16px" class="me-2" viewBox="0 0 576 512">
-                            <path d="M575.8 255.5c0 18-15 32.1-32 32.1l-32 0 .7 160.2c0 2.7-.2 5.4-.5 8.1l0 16.2c0 22.1-17.9 40-40 40l-16 0c-1.1 0-2.2 0-3.3-.1c-1.4 .1-2.8 .1-4.2 .1L416 512l-24 0c-22.1 0-40-17.9-40-40l0-24 0-64c0-17.7-14.3-32-32-32l-64 0c-17.7 0-32 14.3-32 32l0 64 0 24c0 22.1-17.9 40-40 40l-24 0-31.9 0c-1.5 0-3-.1-4.5-.2c-1.2 .1-2.4 .2-3.6 .2l-16 0c-22.1 0-40-17.9-40-40l0-112c0-.9 0-1.9 .1-2.8l0-69.7-32 0c-18 0-32-14-32-32.1c0-9 3-17 10-24L266.4 8c7-7 15-8 22-8s15 2 21 7L564.8 231.5c8 7 12 15 11 24z" />
-                        </svg>
-                        Home
-                    </a>
-                </li>
-                <li class="breadcrumb-item">
-                    <a href="/Customer/Invoice">
-                        Quản lý đơn hàng
-                    </a>
-                </li>
-                <li class="breadcrumb-item active" aria-current="page">Chi tiết đơn hàng</li>
-            </ol>
-        </nav>
-    </div>
+@section Styles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="stylesheet" href="~/css/invoice.css">
+}
 
-    <div class="mt-3">
-        <div class="order-details-card card shadow">
-            <div class="card-header">
-                Chi tiết đơn hàng
-            </div>
-            <div class="card-body px-5">
-                <div>
-                    <div><strong>Danh sách:</strong></div>
-                    @{
-                        int totalQuantity = 0;
-                        foreach(var item in Model.InvoiceItems)
-                        {
-                            <div class="card mb-3 shadow">
-                                <div class="row">
-                                    <div class="col-3">
-                                        <div class="card-image shadow">
-                                            <img src="@item.ProductType.ImageUrl" alt="Ảnh sản phẩm"></img>
-                                        </div>
-                                    </div>
-                                    <div class="col-9 py-3">
-                                        <div><strong>Loại sản phẩm: </strong>@item.ProductType.Name</div>
-                                        <div><strong>Số lượng: </strong>@item.Quantity</div>
-                                    </div>
+<div class="invoice-container">
+    <div class="container">
+        <div class="mt-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="/">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="blue" width="16px" class="me-2" viewBox="0 0 576 512">
+                                <path d="M575.8 255.5c0 18-15 32.1-32 32.1l-32 0 .7 160.2c0 2.7-.2 5.4-.5 8.1l0 16.2c0 22.1-17.9 40-40 40l-16 0c-1.1 0-2.2 0-3.3-.1c-1.4 .1-2.8 .1-4.2 .1L416 512l-24 0c-22.1 0-40-17.9-40-40l0-24 0-64c0-17.7-14.3-32-32-32l-64 0c-17.7 0-32 14.3-32 32l0 64 0 24c0 22.1-17.9 40-40 40l-24 0-31.9 0c-1.5 0-3-.1-4.5-.2c-1.2 .1-2.4 .2-3.6 .2l-16 0c-22.1 0-40-17.9-40-40l0-112c0-.9 0-1.9 .1-2.8l0-69.7-32 0c-18 0-32-14-32-32.1c0-9 3-17 10-24L266.4 8c7-7 15-8 22-8s15 2 21 7L564.8 231.5c8 7 12 15 11 24z" />
+                            </svg>
+                            Trang chủ
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="/Customer/Invoice">
+                            <i class="fas fa-list-alt me-1"></i>
+                            Quản lý đơn hàng
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        <i class="fas fa-eye me-1"></i>
+                        Chi tiết đơn hàng
+                    </li>
+                </ol>
+            </nav>
+        </div>        <div class="mt-4">
+            <div class="card invoice-card shadow mx-auto" style="max-width: 1000px;">
+                <div class="invoice-header">
+                    <h4><i class="fas fa-file-invoice me-3"></i>Chi tiết hóa đơn</h4>
+                    <p class="mb-0 mt-2 opacity-75">Thông tin chi tiết đơn hàng của bạn</p>
+                </div>
+                
+                <div class="card-body">
+                    <!-- Thông tin hóa đơn -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="bg-light p-3 rounded invoice-info-card">
+                                <h6 class="mb-3 text-primary"><i class="fas fa-receipt me-2"></i>Thông tin hóa đơn</h6>
+                                <div class="mb-2">
+                                    <strong>Mã hóa đơn:</strong> 
+                                    <span class="text-muted">HD@Model.Id.ToString("00000")</span>
+                                </div>
+                                <div class="mb-2">
+                                    <strong>Ngày tạo:</strong> 
+                                    <span class="text-muted">@Model.CreateAt.ToString("dd/MM/yyyy HH:mm")</span>
+                                </div>
+                                <div class="mb-2">
+                                    <strong>Trạng thái:</strong> 
+                                    @{
+                                        string statusClass = Model.Status switch {
+                                            0 => "bg-warning",
+                                            1 => "bg-info", 
+                                            2 => "bg-success",
+                                            -1 => "bg-danger",
+                                            _ => "bg-secondary"
+                                        };
+                                        string statusText = Model.Status switch {
+                                            0 => "Đã cọc",
+                                            1 => "Đã thanh toán",
+                                            2 => "Hoàn thành", 
+                                            -1 => "Đã hủy",
+                                            _ => "Khác"
+                                        };
+                                    }
+                                    <span class="badge @statusClass">@statusText</span>
                                 </div>
                             </div>
-
-                            totalQuantity += item.Quantity;
-                        }
-                    }
-
-                </div>
-                <div class="mt-3">
-                    <div><strong>Ngày tạo: </strong>@Model.CreateAt.ToString("dd/MM/yyyy")</div>
-                    <div><strong>Địa chỉ: </strong>@Model.Address</div>
-                    <div><strong>Trạng thái:</strong>@{
-                            var trangthai = Model.Status == 0 ? "Đã cọc" :
-                              Model.Status == 1 ? "Đã thanh toán" :
-                                 Model.Status == 2 ? "Hoàn thành" :
-                                     Model.Status == -1 ? "Hủy" : "Khác";
-                        } 
-                        @trangthai
+                        </div>
+                        <div class="col-md-6">
+                            <div class="bg-light p-3 rounded invoice-info-card">
+                                <h6 class="mb-3 text-primary"><i class="fas fa-map-marker-alt me-2"></i>Thông tin giao hàng</h6>
+                                <div class="mb-2">
+                                    <strong>Địa chỉ:</strong> 
+                                    <span class="text-muted">@(string.IsNullOrEmpty(Model.Address) ? "Chưa cập nhật" : Model.Address)</span>
+                                </div>
+                                <div class="mb-2">
+                                    <strong>Ghi chú:</strong> 
+                                    <span class="text-muted">
+                                        @if(Model.InvoiceItems?.FirstOrDefault()?.ProductType?.ProductLaunch?.DateEnd > DateTime.Now)
+                                        {
+                                            <span class="text-success">Đợt mua sắm đang diễn ra</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-info">Đợt mua sắm đã kết thúc</span>
+                                        }
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>                    <!-- Danh sách sản phẩm -->
+                    <div class="mt-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="info-icon me-0">
+                                <i class="fas fa-shopping-cart"></i>
+                            </div>
+                            <h6 class="mb-0 ms-3 text-primary fw-bold">Danh sách sản phẩm đã đặt</h6>
+                        </div>
+                        <div class="product-table">
+                            <table class="table table-hover mb-0">
+                                <thead>
+                                    <tr>
+                                        <th><i class="fas fa-box-open me-2"></i>Sản phẩm</th>
+                                        <th class="text-center"><i class="fas fa-sort-numeric-up me-1"></i>Số lượng</th>
+                                        <th class="text-end"><i class="fas fa-tag me-1"></i>Giá gốc</th>
+                                        <th class="text-end"><i class="fas fa-calculator me-1"></i>Thành tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        decimal totalAmount = 0;
+                                        int totalQuantity = 0;
+                                        if (Model?.InvoiceItems != null)
+                                        {
+                                            foreach (var item in Model.InvoiceItems)
+                                            {
+                                                if (item != null)
+                                                {
+                                                    totalAmount += item.Amount;
+                                                    totalQuantity += item.Quantity;
+                                                    <tr>
+                                                        <td>
+                                                            <div class="d-flex align-items-center">
+                                                                <img src="@(item.ProductType?.ImageUrl ?? "/images/no-image.png")" alt="@(item.ProductType?.Name ?? "Sản phẩm")" 
+                                                                     class="rounded me-3 product-image" style="width: 60px; height: 60px; object-fit: cover;">
+                                                                <div>
+                                                                    <div class="fw-bold">@(item.ProductType?.Name ?? "Không xác định")</div>
+                                                                    <small class="text-muted">
+                                                                        Loại: @(item.ProductType?.ProductLaunch?.Product?.Name ?? "Không xác định")
+                                                                    </small>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center align-middle">
+                                                            <span class="badge bg-secondary">@item.Quantity</span>
+                                                        </td>
+                                                        <td class="text-end align-middle">
+                                                            @((item.Quantity > 0 ? (item.Amount / item.Quantity) : 0).ToString("N0")) VNĐ
+                                                        </td>
+                                                        <td class="text-end align-middle fw-bold">
+                                                            @item.Amount.ToString("N0") VNĐ
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                        }
+                                        
+                                        // Tính toán giá hiện tại và số tiền còn lại
+                                        decimal currentTotalAmount = (decimal)ViewBag.CurrentPrice * totalQuantity;
+                                        decimal remainingAmount = currentTotalAmount - Model.Deposit;
+                                    }                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                    <div>
-                        <strong>Tổng tiền: </strong> @((ViewBag.CurrentPrice * totalQuantity).ToString("N0")) VNĐ
+
+                    <!-- Thông tin thanh toán -->
+                    <div class="mt-4">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="alert alert-info">
+                                    <h6 class="alert-heading"><i class="fas fa-info-circle me-2"></i>Thông tin thanh toán</h6>
+                                    <ul class="mb-0">
+                                        @if (Model.Status == 0)
+                                        {
+                                            <li>Bạn đã thanh toán <strong>@Model.Deposit.ToString("N0") VNĐ</strong> tiền cọc</li>
+                                            <li>Số tiền còn lại cần thanh toán: <strong>@remainingAmount.ToString("N0") VNĐ</strong></li>
+                                            @if(Model.InvoiceItems?.FirstOrDefault()?.ProductType?.ProductLaunch?.DateEnd <= DateTime.Now)
+                                            {
+                                                <li>Đợt mua sắm đã kết thúc, giá được tính theo mức hiện tại</li>
+                                            }
+                                        }
+                                        else if (Model.Status == 1)
+                                        {
+                                            <li>Đơn hàng đã được thanh toán đầy đủ</li>
+                                            <li>Tổng số tiền đã thanh toán: <strong>@currentTotalAmount.ToString("N0") VNĐ</strong></li>
+                                        }
+                                        else if (Model.Status == 2)
+                                        {
+                                            <li>Đơn hàng đã hoàn thành</li>
+                                        }
+                                        else if (Model.Status == -1)
+                                        {
+                                            <li>Đơn hàng đã bị hủy</li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="payment-summary">
+                                    <div class="text-center mb-3">
+                                        <h6 class="text-white mb-0">
+                                            <i class="fas fa-calculator me-2"></i>Tổng kết thanh toán
+                                        </h6>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2 pb-2 border-bottom border-light border-opacity-25">
+                                        <span><i class="fas fa-shopping-bag me-2"></i>Giá gốc:</span>
+                                        <span class="fw-bold">@totalAmount.ToString("N0") VNĐ</span>
+                                    </div>
+                                    @if(Model.InvoiceItems?.FirstOrDefault()?.ProductType?.ProductLaunch?.DateEnd <= DateTime.Now)
+                                    {
+                                        <div class="d-flex justify-content-between mb-2 pb-2 border-bottom border-light border-opacity-25">
+                                            <span><i class="fas fa-chart-line me-2"></i>Giá hiện tại:</span>
+                                            <span class="fw-bold text-info">@currentTotalAmount.ToString("N0") VNĐ</span>
+                                        </div>
+                                    }
+                                    <div class="d-flex justify-content-between mb-2 pb-2 border-bottom border-light border-opacity-25">
+                                        <span><i class="fas fa-money-bill me-2"></i>Đã cọc:</span>
+                                        <span class="fw-bold text-success">@Model.Deposit.ToString("N0") VNĐ</span>
+                                    </div>
+                                    @if (Model.Status == 0 && Model.InvoiceItems?.FirstOrDefault()?.ProductType?.ProductLaunch?.DateEnd <= DateTime.Now)
+                                    {
+                                        <div class="text-center">
+                                            <div class="payment-amount mb-2 text-warning">
+                                                @remainingAmount.ToString("N0") VNĐ
+                                            </div>
+                                            <small class="opacity-75">
+                                                <i class="fas fa-clock me-1"></i>
+                                                Còn lại cần thanh toán
+                                            </small>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="text-center">
+                                            <div class="payment-amount mb-2">
+                                                @currentTotalAmount.ToString("N0") VNĐ
+                                            </div>
+                                            <small class="opacity-75">
+                                                <i class="fas fa-check me-1"></i>
+                                                Tổng giá trị đơn hàng
+                                            </small>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>                </div>
+                
+                <div class="card-footer bg-transparent p-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a href="/Customer/Invoice" class="btn btn-secondary btn-lg">
+                            <i class="fas fa-arrow-left me-2"></i>Quay lại
+                        </a>
+                        
+                        <div class="action-buttons">
+                            @{
+                                if(Model.InvoiceItems?.FirstOrDefault()?.ProductType?.ProductLaunch?.DateEnd > DateTime.Now && Model.Status != -1)
+                                {
+                                    <button onclick="Cancel(@Model.Id)" class="btn btn-danger btn-lg me-2">
+                                        <i class="fas fa-times me-2"></i>Hủy đơn
+                                    </button>
+                                }
+                                else if (Model.InvoiceItems?.FirstOrDefault()?.ProductType?.ProductLaunch?.DateEnd <= DateTime.Now && Model.Status == 0)
+                                {
+                                    <input hidden id="code" value="@Model.Id" />
+                                    <input hidden id="total" value="@currentTotalAmount" />
+                                    <input hidden id="deposit" value="@Model.Deposit" />
+                                    <button onClick="Payment()" class="btn btn-success btn-lg">
+                                        <i class="fas fa-credit-card me-2"></i>
+                                        Thanh toán @remainingAmount.ToString("N0") VNĐ
+                                    </button>
+                                }
+                            }
+                        </div>
+                    </div>
+                    <div class="security-info text-center mt-3">
+                        <small class="text-muted d-flex align-items-center justify-content-center">
+                            <i class="fas fa-shield-alt text-success me-2"></i>
+                            Thanh toán được bảo mật với SSL 256-bit
+                            <i class="fas fa-lock text-primary ms-2"></i>
+                        </small>
                     </div>
                 </div>
-            </div>
-            <div class="card-footer">
-                <a href="/Customer/Invoice" class="btn btn-secondary">Quay lại</a>
-                @{
-                    if(Model.InvoiceItems.FirstOrDefault().ProductType.ProductLaunch.DateEnd > DateTime.Now && Model.Status != -1)
-                    {
-                        <button onclick="Cancel(@Model.Id)" class="btn btn-danger">Hủy</button>
-                    }
-                    else if (Model.InvoiceItems.FirstOrDefault().ProductType.ProductLaunch.DateEnd <= DateTime.Now && Model.Status != 1 && Model.Status != 2 && Model.Status != -1)
-                    {
-                        <input hidden id="code" value=" @Model.Id"></input>
-                        <input hidden id="total" value="@(ViewBag.CurrentPrice * totalQuantity)"></input>
-                        <input hidden id="deposit" value="@Model.Deposit"></input>
-                        <button onClick="Payment()" class="btn btn-success">Thanh toán</button>
-                    }
-                }
             </div>
         </div>
     </div>
 </div>
 
-@section Scripts{
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="~/js/invoice.js"></script>
     <script>
         function Payment() {
             const total = parseFloat($('#total').val());
             const code = parseInt($('#code').val());
             const deposit = parseFloat($('#deposit').val());
+            
+            // Tính số tiền còn lại phải thanh toán (tổng tiền hiện tại - tiền cọc)
+            const remainingAmount = total - deposit;
 
             $.ajax({
                 url: `/Customer/Invoice/Payment`,
@@ -109,22 +312,29 @@
                     address: 'temp',
                     status: 0,
                     createAt: new Date().toISOString()
-
                 }),
                 success: function (response) {
-                        if (response.url) {
-                            window.location.href = response.url; // ✅ Thực hiện redirect thủ công
-                        } else {
-                            alert("Không nhận được URL thanh toán.");
-                        }
+                    if (response.url) {
+                        window.location.href = response.url;
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi',
+                            text: 'Không nhận được URL thanh toán.'
+                        });
+                    }
                 },
                 error: function (xhr, status, error) {
-                    alert("Đã xảy ra lỗi khi thực hiện thanh toán: " + error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi thanh toán',
+                        text: 'Đã xảy ra lỗi khi thực hiện thanh toán: ' + error
+                    });
                 }
             });
         }
 
-            function Cancel(id) {
+        function Cancel(id) {
             Swal.fire({
                 title: 'Bạn có chắc chắn?',
                 text: "Bạn sẽ không thể hoàn tác hành động này!",
@@ -133,7 +343,8 @@
                 confirmButtonColor: '#d33',
                 cancelButtonColor: '#3085d6',
                 confirmButtonText: 'Vâng, hủy đơn!',
-                cancelButtonText: 'Không'
+                cancelButtonText: 'Không',
+                reverseButtons: true
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
@@ -141,19 +352,50 @@
                         method: 'POST',
                         success: function (response) {
                             if (response === true) {
-                                toastr.success("Hủy đơn hàng thành công.");
-                                // Tùy ý: load lại trang hoặc ẩn nút hủy
-                                setTimeout(() => location.reload(), 1000);
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Thành công',
+                                    text: 'Hủy đơn hàng thành công.',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                }).then(() => {
+                                    location.reload();
+                                });
                             } else {
-                                toastr.error("Hủy đơn hàng thất bại.");
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Lỗi',
+                                    text: 'Hủy đơn hàng thất bại.'
+                                });
                             }
                         },
                         error: function () {
-                            toastr.error("Đã xảy ra lỗi trong quá trình xử lý.");
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Lỗi',
+                                text: 'Đã xảy ra lỗi trong quá trình xử lý.'
+                            });
                         }
                     });
                 }
             });
         }
+
+        // Add invoice-specific data attributes for validation
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add print functionality
+            const printBtn = document.createElement('button');
+            printBtn.type = 'button';
+            printBtn.className = 'btn btn-outline-primary btn-sm ms-2';
+            printBtn.innerHTML = '<i class="fas fa-print me-1"></i>In hóa đơn';
+            printBtn.addEventListener('click', function() {
+                window.print();
+            });
+            
+            const breadcrumb = document.querySelector('.breadcrumb');
+            if (breadcrumb) {
+                breadcrumb.parentNode.appendChild(printBtn);
+            }
+        });
     </script>
 }
