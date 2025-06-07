@@ -127,9 +127,11 @@ function updateTotal() {
     document.getElementById('current-price-level').textContent = currentPrice.toLocaleString() + ' VND';
     document.getElementById('total-value').textContent = finalValue.toLocaleString() + ' VND';
     document.getElementById('deposit-amount').textContent = depositAmount.toLocaleString() + ' VND';
-    
-    // Update progress bar
+      // Update progress bar
     updateProgressBar(total);
+    
+    // Update mini-cards highlighting
+    updateMiniCards(totalQuantity);
 }
 
 /**
@@ -257,6 +259,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize progress bar on page load
     if (document.getElementById('PriceData')) {
         updateProgressBar(0);
+        // Initialize mini-cards highlighting
+        const currentRegistration = parseInt(document.getElementById('CurrentRegistration').value);
+        updateMiniCards(currentRegistration);
     }
 });
 
@@ -375,4 +380,39 @@ function StartOrder() {
             });
         }
     });
+}
+
+/**
+ * Updates mini-cards highlighting based on current registration + selected quantity
+ */
+function updateMiniCards(totalQuantity) {
+    const priceData = JSON.parse(document.getElementById('PriceData').value);
+    
+    // Find the highest price level achieved
+    const currentActivePriceLevel = priceData.filter(p => totalQuantity >= p.Number)
+                                            .sort((a, b) => b.Number - a.Number)[0];
+    
+    // Remove active class from all mini-cards
+    document.querySelectorAll('.mini-card').forEach(card => {
+        card.classList.remove('active');
+    });
+    
+    // Add active class to the appropriate card
+    if (currentActivePriceLevel) {
+        // Find the card with matching number
+        document.querySelectorAll('.mini-card').forEach(card => {
+            const cardNumber = parseInt(card.querySelector('.card-header').textContent);
+            if (cardNumber === currentActivePriceLevel.Number) {
+                card.classList.add('active');
+            }
+        });
+    } else {
+        // No price level achieved, activate the default card (0)
+        document.querySelectorAll('.mini-card').forEach(card => {
+            const cardNumber = parseInt(card.querySelector('.card-header').textContent);
+            if (cardNumber === 0) {
+                card.classList.add('active');
+            }
+        });
+    }
 }

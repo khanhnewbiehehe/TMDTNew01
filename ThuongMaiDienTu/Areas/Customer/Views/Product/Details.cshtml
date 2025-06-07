@@ -84,23 +84,25 @@
                         <h2 class="card-title">@Model.Name</h2>
                         
                         <div class="price-cards">
-                            <h5 class="mt-4 mb-3">Bảng giá theo số lượng:</h5>
-                            <div class="d-flex flex-wrap justify-content-start">
+                            <h5 class="mt-4 mb-3">Bảng giá theo số lượng:</h5>                            <div class="d-flex flex-wrap justify-content-start">
                                 @{
                                     var registration = ViewBag.Registration;
+                                    var priceList = Model.Launches.OrderByDescending(x => x.Id).FirstOrDefault().Types.ToList()[0].Prices.OrderBy(p => p.Number).ToList();
                                     
-                                    <div class="mini-card mt-2 shadow mx-2 @(registration == 0 ? "active" : "")">
+                                    // Tìm mốc giá cao nhất đã đạt được
+                                    var currentActivePriceLevel = priceList.Where(p => registration >= p.Number).OrderByDescending(p => p.Number).FirstOrDefault();
+                                    
+                                    // Card mặc định (mốc 0)
+                                    bool isDefaultActive = (currentActivePriceLevel == null);
+                                    <div class="mini-card mt-2 shadow mx-2 @(isDefaultActive ? "active" : "")">
                                         <div class="card-header">0</div>
                                         <div class="card-body">@Model.Launches.OrderByDescending(x => x.Id).FirstOrDefault().Types.FirstOrDefault().MaxPrice.ToString("N0")</div>
                                     </div>
                                     
-                                    var lastActivatedPrice = 0;
-                                    foreach (var item in Model.Launches.OrderByDescending(x => x.Id).FirstOrDefault().Types.ToList()[0].Prices.OrderBy(p => p.Number))
+                                    // Các card mốc giá
+                                    foreach (var item in priceList)
                                     {
-                                        bool isActive = registration >= item.Number && (lastActivatedPrice == 0 || item.Number > lastActivatedPrice);
-                                        if (isActive) {
-                                            lastActivatedPrice = item.Number;
-                                        }
+                                        bool isActive = (currentActivePriceLevel != null && item.Number == currentActivePriceLevel.Number);
                                         
                                         <div class="mini-card shadow mt-2 mx-2 @(isActive ? "active" : "")">
                                             <div class="card-header">@item.Number</div>
@@ -269,13 +271,12 @@
                 </svg>
                 Tiến độ đạt mức giá tốt hơn
             </h6>
-            
-            @{
+              @{
                 var currentTotal = ViewBag.Registration;
                 var maxQuantity = ViewBag.Quantity;
-                var priceList = Model.Launches.OrderByDescending(x => x.Id).FirstOrDefault().Types.ToList()[0].Prices.OrderBy(p => p.Number).ToList();
-                var nextPriceLevel = priceList.FirstOrDefault(p => p.Number > currentTotal);
-                var currentPriceLevel = priceList.LastOrDefault(p => p.Number <= currentTotal);
+                var progressPriceList = Model.Launches.OrderByDescending(x => x.Id).FirstOrDefault().Types.ToList()[0].Prices.OrderBy(p => p.Number).ToList();
+                var nextPriceLevel = progressPriceList.FirstOrDefault(p => p.Number > currentTotal);
+                var currentPriceLevel = progressPriceList.LastOrDefault(p => p.Number <= currentTotal);
                 
                 double progressPercent = 0;
                 int needed = 0;
